@@ -6,6 +6,7 @@ import {
   Platform,
   ScrollView,
   Text,
+  TouchableOpacity,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../../store/authStore';
@@ -26,6 +27,8 @@ export default function LoginScreen({
 }: LoginScreenProps) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   
   const { signIn, loading, error, clearError } = useAuthStore();
 
@@ -71,120 +74,143 @@ export default function LoginScreen({
             keyboardShouldPersistTaps="handled"
           >
             {/* Header */}
-            <View className="mb-10 mt-6">
-              <Text className="text-4xl font-bold text-typography-900 mb-4">
-                Selamat Datang
+            <View className="mb-8 mt-6">
+              <Text className="text-2xl font-bold text-typography-900 mb-4">
+                Login to your account
               </Text>
-              <Text className="text-lg text-typography-600 leading-7">
-                Masuk ke akun SchoolSync Anda untuk mengelola pesantren
-              </Text>
+              <View className="flex-row items-center">
+                <Text className="text-base text-typography-600 mr-2">
+                  Don't have an account?
+                </Text>
+                <TouchableOpacity onPress={onNavigateToSignUp}>
+                  <Text className="text-base text-primary-600 font-semibold">
+                    Sign up
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Form Card */}
-            <Card variant="elevated" size="lg" className="p-6 bg-white shadow-lg">
-              {/* Email Input */}
+            <Card variant="elevated" size="lg" className="p-6 bg-white shadow-lg rounded-xl">
+              {/* Form Fields */}
               <View className="mb-6">
-                <Text className="text-base font-semibold text-typography-900 mb-3">
-                  Email
-                </Text>
-              <Input
-                  variant="outline"
-                  size="lg"
-                  isDisabled={loading}
-                  isInvalid={email ? !validateEmail(email) : undefined}
-                  className="bg-background-50 border-border-300"
-                >
-                  <InputField
-                    placeholder="Masukkan email Anda"
-                    value={email}
-                    onChangeText={setEmail}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    autoCorrect={false}
-                    className="text-typography-900"
-                  />
-                </Input>
-                {email && !validateEmail(email) && (
-                  <Text className="text-sm text-error-600 mt-2">
-                    Format email tidak valid
+                {/* Email Input */}
+                <View className="mb-6">
+                  <Text className="text-sm font-medium text-typography-900 mb-2">
+                    Email
                   </Text>
-                )}
+                  <Input
+                    variant="outline"
+                    size="md"
+                    isDisabled={loading}
+                    isInvalid={email ? !validateEmail(email) : undefined}
+                    className="bg-background-0 border-border-300 rounded-md"
+                  >
+                    <InputField
+                      placeholder="abc@gmail.com"
+                      value={email}
+                      onChangeText={setEmail}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      className="text-typography-900 text-sm"
+                    />
+                  </Input>
+                </View>
+
+                {/* Password Input */}
+                <View className="mb-4">
+                  <Text className="text-sm font-medium text-typography-900 mb-2">
+                    Password
+                  </Text>
+                  <Input
+                    variant="outline"
+                    size="md"
+                    isDisabled={loading}
+                    className="bg-background-0 border-border-300 rounded-md"
+                  >
+                    <InputField
+                      placeholder="Enter password"
+                      value={password}
+                      onChangeText={setPassword}
+                      secureTextEntry={!showPassword}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      className="text-typography-900 text-sm flex-1"
+                    />
+                    <TouchableOpacity 
+                      onPress={() => setShowPassword(!showPassword)}
+                      className="px-3 py-2"
+                    >
+                      <Text className="text-typography-500 text-xs">
+                        {showPassword ? '👁️' : '👁️‍🗨️'}
+                      </Text>
+                    </TouchableOpacity>
+                  </Input>
+                </View>
+
+                {/* Remember Me and Forgot Password */}
+                <View className="flex-row justify-between items-center mb-6">
+                  <View className="flex-row items-center">
+                    <TouchableOpacity 
+                      onPress={() => setRememberMe(!rememberMe)}
+                      className="flex-row items-center"
+                    >
+                      <View className={`w-4 h-4 rounded border mr-2 items-center justify-center ${
+                        rememberMe ? 'bg-primary-600 border-primary-600' : 'border-border-300'
+                      }`}>
+                        {rememberMe && (
+                          <Text className="text-white text-xs">✓</Text>
+                        )}
+                      </View>
+                      <Text className="text-sm text-typography-900">
+                        Remember me
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                  <TouchableOpacity onPress={onNavigateToForgotPassword}>
+                    <Text className="text-sm text-primary-600">
+                      Forgot Password?
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
 
-              {/* Password Input */}
-              <View className="mb-6">
-                <Text className="text-base font-semibold text-typography-900 mb-3">
-                  Password
-                </Text>
-                <Input
-                  variant="outline"
-                  size="lg"
-                  isDisabled={loading}
-                  className="bg-background-50 border-border-300"
-                >
-                 <InputField
-                   placeholder="Masukkan password Anda"
-                   value={password}
-                   onChangeText={setPassword}
-                   secureTextEntry={true}
-                   autoCapitalize="none"
-                   autoCorrect={false}
-                   className="text-typography-900"
-                 />
-               </Input>
-             </View>
+              {/* Login Button */}
+              <Button
+                size="lg"
+                variant="solid"
+                action="primary"
+                isDisabled={!isFormValid || loading}
+                onPress={handleLogin}
+                className="mb-6 rounded-md"
+              >
+                {loading && <ButtonSpinner className="mr-2" />}
+                <ButtonText className="font-medium text-sm">
+                  Login
+                </ButtonText>
+              </Button>
 
-             {/* Forgot Password Link */}
-             <View className="mb-8">
-               <Button
-                 variant="link"
-                 size="sm"
-                 onPress={onNavigateToForgotPassword}
-                 isDisabled={loading}
-                 className="self-end"
-               >
-                 <ButtonText className="text-primary-600 text-sm">
-                   Lupa Password?
-                 </ButtonText>
-               </Button>
-             </View>
+              {/* Divider */}
+              <View className="flex-row items-center mb-6">
+                <View className="flex-1 h-px bg-border-200" />
+                <Text className="mx-4 text-sm text-typography-500">or</Text>
+                <View className="flex-1 h-px bg-border-200" />
+              </View>
 
-             {/* Login Button */}
-             <Button
-               size="xl"
-               variant="solid"
-               action="primary"
-               isDisabled={!isFormValid || loading}
-               onPress={handleLogin}
-               className="mb-8"
-             >
-               {loading && <ButtonSpinner className="mr-2" />}
-               <ButtonText className="font-semibold">Masuk</ButtonText>
-             </Button>
-
-             {/* Divider */}
-             <View className="flex-row items-center mb-8">
-               <View className="flex-1 h-px bg-border-300" />
-               <Text className="mx-4 text-sm text-typography-500">atau</Text>
-               <View className="flex-1 h-px bg-border-300" />
-             </View>
-
-             {/* Sign Up Link */}
-             <View className="flex-row justify-center items-center">
-               <Text className="text-base text-typography-600">Belum punya akun? </Text>
-               <Button
-                 variant="link"
-                 size="sm"
-                 onPress={onNavigateToSignUp}
-                 isDisabled={loading}
-                 className="p-0"
-               >
-                 <ButtonText className="text-primary-600 font-semibold text-base">
-                   Daftar di sini
-                 </ButtonText>
-               </Button>
-             </View>
-             </Card>
+              {/* Social Login Buttons */}
+              <View className="flex-row justify-center space-x-4">
+                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
+                  <Text className="text-lg">G</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
+                  <Text className="text-lg">🐦</Text>
+                </TouchableOpacity>
+                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
+                  <Text className="text-lg">📱</Text>
+                </TouchableOpacity>
+              </View>
+            </Card>
           </ScrollView>
         </KeyboardAvoidingView>
       </SafeAreaView>
