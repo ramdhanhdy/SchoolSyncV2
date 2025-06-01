@@ -13,8 +13,6 @@ import { useAuthStore } from '../../store/authStore';
 import { router } from 'expo-router';
 import { Button, ButtonText, ButtonSpinner } from '../ui/button';
 import { Input, InputField } from '../ui/input';
-import { Card } from '../ui/card';
-import ModernBackground from '../ui/ModernBackground';
 
 interface LoginScreenProps {
   onNavigateToSignUp?: () => void;
@@ -63,37 +61,28 @@ export default function LoginScreen({
   }, [error, clearError]);
 
   return (
-    <ModernBackground variant="auth">
-      <SafeAreaView className="flex-1">
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="flex-1"
+    <SafeAreaView className="flex-1 bg-white">
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        className="flex-1"
+      >
+        <ScrollView 
+          contentContainerStyle={{ flexGrow: 1, paddingHorizontal: 24, paddingVertical: 40 }}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
         >
-          <ScrollView 
-            contentContainerStyle={{ flexGrow: 1, padding: 20 }}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Header */}
-            <View className="mb-8 mt-6">
-              <Text className="text-2xl font-bold text-typography-900 mb-4">
-                Login to your account
-              </Text>
-              <View className="flex-row items-center">
-                <Text className="text-base text-typography-600 mr-2">
-                  Don't have an account?
-                </Text>
-                <TouchableOpacity onPress={onNavigateToSignUp}>
-                  <Text className="text-base text-primary-600 font-semibold">
-                    Sign up
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
+          {/* Header */}
+          <View className="mb-12 mt-8">
+            <Text className="text-3xl font-bold text-typography-900 mb-3">
+              Welcome Back
+            </Text>
+            <Text className="text-base text-typography-600 mb-8">
+              Sign in to your account to continue
+            </Text>
+          </View>
 
-            {/* Form Card */}
-            <Card variant="elevated" size="lg" className="p-6 bg-white shadow-lg rounded-xl">
-              {/* Form Fields */}
-              <View className="mb-6">
+          {/* Form Fields */}
+          <View className="mb-8">
                 {/* Email Input */}
                 <View className="mb-6">
                   <Text className="text-sm font-medium text-typography-900 mb-2">
@@ -174,46 +163,56 @@ export default function LoginScreen({
                     </Text>
                   </TouchableOpacity>
                 </View>
-              </View>
+          </View>
 
-              {/* Login Button */}
-              <Button
-                size="lg"
-                variant="solid"
-                action="primary"
-                isDisabled={!isFormValid || loading}
-                onPress={handleLogin}
-                className="mb-6 rounded-md"
-              >
-                {loading && <ButtonSpinner className="mr-2" />}
-                <ButtonText className="font-medium text-sm">
-                  Login
-                </ButtonText>
-              </Button>
+          {/* Login Button */}
+          <Button
+            size="lg"
+            variant="solid"
+            action="primary"
+            isDisabled={!isFormValid || loading}
+            onPress={handleLogin}
+            className="mb-8 rounded-xl h-14"
+          >
+            {loading && <ButtonSpinner className="mr-2" />}
+            <ButtonText className="font-semibold text-base">
+              Sign In
+            </ButtonText>
+          </Button>
 
-              {/* Divider */}
-              <View className="flex-row items-center mb-6">
-                <View className="flex-1 h-px bg-border-200" />
-                <Text className="mx-4 text-sm text-typography-500">or</Text>
-                <View className="flex-1 h-px bg-border-200" />
-              </View>
+          {/* Divider */}
+          <View className="flex-row items-center mb-8">
+            <View className="flex-1 h-px bg-border-200" />
+            <Text className="mx-4 text-sm text-typography-500">or continue with</Text>
+            <View className="flex-1 h-px bg-border-200" />
+          </View>
 
-              {/* Social Login Buttons */}
-              <View className="flex-row justify-center space-x-4">
-                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
-                  <Text className="text-lg">G</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
-                  <Text className="text-lg">🐦</Text>
-                </TouchableOpacity>
-                <TouchableOpacity className="w-10 h-10 rounded-full bg-background-100 items-center justify-center">
-                  <Text className="text-lg">📱</Text>
-                </TouchableOpacity>
-              </View>
-            </Card>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </SafeAreaView>
-    </ModernBackground>
+          {/* Social Login Buttons */}
+          <View className="flex-row justify-center space-x-4 mb-12">
+            <TouchableOpacity className="w-12 h-12 rounded-xl bg-background-100 items-center justify-center border border-border-200">
+              <Text className="text-lg">G</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="w-12 h-12 rounded-xl bg-background-100 items-center justify-center border border-border-200">
+              <Text className="text-lg">🍎</Text>
+            </TouchableOpacity>
+            <TouchableOpacity className="w-12 h-12 rounded-xl bg-background-100 items-center justify-center border border-border-200">
+              <Text className="text-lg">📱</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Sign Up Link */}
+          <View className="flex-row justify-center items-center mt-auto">
+            <Text className="text-base text-typography-600 mr-2">
+              Don't have an account?
+            </Text>
+            <TouchableOpacity onPress={onNavigateToSignUp}>
+              <Text className="text-base text-primary-600 font-semibold">
+                Sign Up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
