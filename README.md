@@ -192,17 +192,9 @@ npm run format
 - [ ] Mobile-specific UI improvements
 - [ ] Performance optimization
 
-## 🤝 Contributing
+## 📞 Support
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+For technical support or questions about SchoolSync V2, please contact the development team.
 
 ## 🙏 Acknowledgments
 
@@ -210,10 +202,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [Supabase](https://supabase.com/) for the backend infrastructure
 - [Gluestack UI](https://ui.gluestack.io/) for the component library
 - [Tailwind CSS](https://tailwindcss.com/) for the styling framework
-
-## 📞 Support
-
-For support, email support@schoolsync.id or join our Slack channel.
 
 ---
 
