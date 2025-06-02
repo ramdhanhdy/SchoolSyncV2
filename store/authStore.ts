@@ -239,38 +239,88 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       set({ loading: true });
       
-      const { data: profile, error: profileError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('id', user.id)
-        .single();
+      let fetchedProfile: UserProfile | null = null;
+      let lastProfileError: any = null; // Can be PostgrestError or other
+      const maxRetries = 5;
+      const retryDelay = 1000; // 1 second delay between retries
 
-      if (profileError) {
-        console.error('Profile load error:', profileError);
+      console.log('Starting profile load for user:', user.id);
+      
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        console.log(`Profile load attempt ${attempt}/${maxRetries}...`);
+        
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+
+        if (error) {
+          console.log(`Profile load attempt ${attempt}/${maxRetries} failed:`, error);
+          lastProfileError = error;
+          
+          // Only retry if it's the PGRST116 error (profile not found)
+          if (error.code === 'PGRST116') {
+            if (attempt < maxRetries) {
+              console.log(`Waiting ${retryDelay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
+          } else {
+            // For other errors, don't retry
+            console.error('Non-PGRST116 error encountered, stopping retries:', error);
+            break;
+          }
+        } else {
+          console.log('Profile loaded successfully on attempt', attempt);
+          fetchedProfile = data;
+          break;
+        }
+      }
+
+      if (!fetchedProfile) {
+        console.error('Failed to load profile after all retries. Last error:', lastProfileError);
+        
+        // If we still can't load the profile after all retries, check if this is a new user
+        // by examining the user metadata for role = 'management'
+        if (user.user_metadata?.role === 'management' && lastProfileError?.code === 'PGRST116') {
+          console.log('New management user detected. Profile will be created by database trigger.');
+          // We'll let the user continue, as the profile should be created by the database trigger
+          // and will be available on next app launch or refresh
+        }
+        
         set({ loading: false });
         return;
       }
 
-      set({ profile });
+      set({ profile: fetchedProfile });
 
       // Load school if user has school_id
-      if (profile.school_id) {
-        const { data: school } = await supabase
+      if (fetchedProfile.school_id) {
+        console.log('Loading school data for school_id:', fetchedProfile.school_id);
+        const { data: school, error: schoolError } = await supabase
           .from('schools')
           .select('*')
-          .eq('id', profile.school_id)
+          .eq('id', fetchedProfile.school_id)
           .single();
         
-        if (school) {
+        if (schoolError) {
+          console.error('Error loading school data:', schoolError);
+        } else if (school) {
+          console.log('School data loaded successfully');
           set({ school });
           await get().loadSubscription();
         }
+      } else {
+        console.log('User has no school_id, skipping school data load');
       }
 
       set({ loading: false });
+      console.log('Profile loading complete');
     } catch (error) {
-      console.error('Load profile error:', error);
-      set({ loading: false });
+      // Catch any other unexpected errors from the outer try block
+      console.error('authStore: Unexpected error in loadUserProfile:', error);
+      const errorMessage = error instanceof Error ? error.message : 'An unexpected error occurred during profile load';
+      set({ error: errorMessage, loading: false });
     }
   },
 
