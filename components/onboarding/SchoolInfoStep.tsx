@@ -17,14 +17,7 @@ interface SchoolInfoStepProps {
   onBack: () => void;
 }
 
-const SCHOOL_TYPES = [
-  'Pesantren Modern',
-  'Pesantren Salaf',
-  'Pesantren Terpadu',
-  'Madrasah Diniyah',
-  'Pondok Pesantren',
-  'Lainnya',
-];
+// School types removed - simplified onboarding
 
 const PROVINCES = [
   'Aceh',
@@ -68,13 +61,9 @@ const PROVINCES = [
 ];
 
 export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: SchoolInfoStepProps) {
-  const [showSchoolTypeDropdown, setShowSchoolTypeDropdown] = useState(false);
   const [showProvinceDropdown, setShowProvinceDropdown] = useState(false);
-  const [customSchoolType, setCustomSchoolType] = useState('');
 
-  const validateStudentCount = (count: number) => {
-    return !isNaN(count) && count > 0 && count <= 10000;
-  };
+  // Student count validation removed - simplified onboarding
 
   const handleNext = () => {
     // Validation
@@ -83,15 +72,7 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
       return;
     }
 
-    if (!data.schoolType.trim()) {
-      Alert.alert('Error', 'Mohon pilih jenis pesantren');
-      return;
-    }
-
-    if (!data.address.trim()) {
-      Alert.alert('Error', 'Mohon isi alamat pesantren');
-      return;
-    }
+    // School type and address validation removed - simplified onboarding
 
     if (!data.city.trim()) {
       Alert.alert('Error', 'Mohon isi kota/kabupaten');
@@ -103,31 +84,12 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
       return;
     }
 
-    if (!data.studentCount || !validateStudentCount(data.studentCount)) {
-      Alert.alert('Error', 'Mohon isi jumlah santri yang valid (1-10000)');
-      return;
-    }
+    // Student count validation removed - simplified onboarding
 
     onNext();
   };
 
-  const handleSchoolTypeSelect = (type: string) => {
-    if (type === 'Lainnya') {
-      setShowSchoolTypeDropdown(false);
-      // Keep dropdown closed and let user type custom type
-    } else {
-      onUpdate({ schoolType: type });
-      setShowSchoolTypeDropdown(false);
-      setCustomSchoolType('');
-    }
-  };
-
-  const handleCustomSchoolTypeSubmit = () => {
-    if (customSchoolType.trim()) {
-      onUpdate({ schoolType: customSchoolType.trim() });
-      setCustomSchoolType('');
-    }
-  };
+  // School type handling functions removed - simplified onboarding
 
   const handleProvinceSelect = (province: string) => {
     onUpdate({ province });
@@ -136,12 +98,8 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
 
   const isFormValid = 
     data.schoolName.trim() &&
-    data.schoolType.trim() &&
-    data.address.trim() &&
     data.city.trim() &&
-    data.province.trim() &&
-    data.studentCount &&
-    validateStudentCount(data.studentCount);
+    data.province.trim();
 
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
@@ -150,7 +108,7 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
         <View style={styles.header}>
           <Text style={styles.title}>Informasi Pesantren</Text>
           <Text style={styles.subtitle}>
-            Berikan informasi tentang pesantren yang Anda kelola
+            Berikan informasi dasar tentang pesantren Anda
           </Text>
         </View>
 
@@ -169,91 +127,7 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
             />
           </View>
 
-          {/* School Type */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Jenis Pesantren *</Text>
-            
-            <TouchableOpacity
-              style={styles.dropdownButton}
-              onPress={() => setShowSchoolTypeDropdown(!showSchoolTypeDropdown)}
-            >
-              <Text style={[
-                styles.dropdownButtonText,
-                !data.schoolType && styles.placeholderText
-              ]}>
-                {data.schoolType || 'Pilih jenis pesantren'}
-              </Text>
-              <Text style={styles.dropdownArrow}>
-                {showSchoolTypeDropdown ? '▲' : '▼'}
-              </Text>
-            </TouchableOpacity>
-
-            {showSchoolTypeDropdown && (
-              <View style={styles.dropdown}>
-                {SCHOOL_TYPES.map((type, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.dropdownOption,
-                      data.schoolType === type && styles.dropdownOptionSelected
-                    ]}
-                    onPress={() => handleSchoolTypeSelect(type)}
-                  >
-                    <Text style={[
-                      styles.dropdownOptionText,
-                      data.schoolType === type && styles.dropdownOptionTextSelected
-                    ]}>
-                      {type}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            {/* Custom School Type Input */}
-            {data.schoolType === 'Lainnya' || (!SCHOOL_TYPES.includes(data.schoolType) && data.schoolType) ? (
-              <View style={styles.customInputContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Masukkan jenis pesantren"
-                  value={data.schoolType === 'Lainnya' ? customSchoolType : data.schoolType}
-                  onChangeText={(value) => {
-                    if (data.schoolType === 'Lainnya') {
-                      setCustomSchoolType(value);
-                    } else {
-                      onUpdate({ schoolType: value });
-                    }
-                  }}
-                  onSubmitEditing={handleCustomSchoolTypeSubmit}
-                  autoCapitalize="words"
-                  autoCorrect={false}
-                />
-                {data.schoolType === 'Lainnya' && (
-                  <TouchableOpacity
-                    style={styles.submitCustomButton}
-                    onPress={handleCustomSchoolTypeSubmit}
-                  >
-                    <Text style={styles.submitCustomButtonText}>✓</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            ) : null}
-          </View>
-
-          {/* Address */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Alamat Lengkap *</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
-              placeholder="Jl. Raya Pesantren No. 123, Desa Santri"
-              value={data.address}
-              onChangeText={(value) => onUpdate({ address: value })}
-              multiline
-              numberOfLines={3}
-              textAlignVertical="top"
-              autoCapitalize="words"
-            />
-          </View>
+          {/* School type and address fields removed - simplified onboarding */}
 
           {/* City */}
           <View style={styles.inputContainer}>
@@ -310,30 +184,13 @@ export default function SchoolInfoStep({ data, onUpdate, onNext, onBack }: Schoo
             )}
           </View>
 
-          {/* Student Count */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Jumlah Santri *</Text>
-            <TextInput
-              style={[
-                styles.input,
-                data.studentCount && !validateStudentCount(data.studentCount) ? styles.inputError : null
-              ]}
-              placeholder="Contoh: 150"
-              value={data.studentCount ? data.studentCount.toString() : ''}
-              onChangeText={(value) => onUpdate({ studentCount: parseInt(value) || 0 })}
-              keyboardType="numeric"
-              autoCorrect={false}
-            />
-            {data.studentCount && !validateStudentCount(data.studentCount) && (
-              <Text style={styles.errorText}>Jumlah santri harus antara 1-10000</Text>
-            )}
-          </View>
+          {/* Student count field removed - simplified onboarding */}
 
           {/* Info Box */}
           <View style={styles.infoBox}>
             <Text style={styles.infoTitle}>🏫 Informasi Pesantren</Text>
             <Text style={styles.infoText}>
-              Data ini akan digunakan untuk menyesuaikan fitur SchoolSync dengan karakteristik pesantren Anda dan membantu dalam pelaporan.
+              Informasi dasar pesantren Anda. Detail lainnya dapat dilengkapi setelah onboarding selesai.
             </Text>
           </View>
         </View>

@@ -12,51 +12,50 @@ import { router } from 'expo-router';
 import { useAuthStore } from '../../../store/authStore';
 import BasicInfoStep from '../../../components/onboarding/BasicInfoStep';
 import SchoolInfoStep from '../../../components/onboarding/SchoolInfoStep';
-import PlanSelectionStep from '../../../components/onboarding/PlanSelectionStep';
-import TeacherInviteStep from '../../../components/onboarding/TeacherInviteStep';
+// Removed PlanSelectionStep and TeacherInviteStep imports - simplified onboarding
 import WelcomeStep from '../../../components/onboarding/WelcomeStep';
 
 export interface OnboardingData {
   // Basic Info
   fullName: string;
   phone: string;
-  position: string;
+  position: string; // Auto-set to 'management' - not collected in UI
   
   // School Info
   schoolName: string;
-  schoolType: string;
-  address: string;
+  schoolType: string; // Optional - can be set later
+  address: string; // Optional - can be set later
   city: string;
   province: string;
-  studentCount: number;
+  studentCount: number; // Optional - can be set later
   
-  // Plan Selection
-  selectedPlan: 'starter' | 'professional' | 'enterprise';
+  // Plan Selection - removed from onboarding, will use default
+  // selectedPlan: 'starter' | 'professional' | 'enterprise';
   
-  // Teacher Invites
-  teacherInvites: {
-    name: string;
-    email: string;
-    subject?: string;
-  }[];
+  // Teacher Invites - removed from onboarding, can be done later
+  // teacherInvites: {
+  //   name: string;
+  //   email: string;
+  //   subject?: string;
+  // }[];
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 3;
 
 export default function OnboardingIndex() {
   const [currentStep, setCurrentStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     fullName: '',
     phone: '',
-    position: '',
+    position: 'management', // Auto-set since user is already in management role
     schoolName: '',
-    schoolType: '',
-    address: '',
+    schoolType: '', // Will be set later or use default
+    address: '', // Will be set later
     city: '',
     province: '',
-    studentCount: 50,
-    selectedPlan: 'starter',
-    teacherInvites: [],
+    studentCount: 0, // Will be set later
+    // selectedPlan: 'starter', // Will use default plan
+    // teacherInvites: [], // Will be handled separately
   });
   
   const { user, profile, updateProfile, createSchool } = useAuthStore();
@@ -131,27 +130,16 @@ export default function OnboardingIndex() {
       // Create school
       const schoolResult = await createSchool({
         name: onboardingData.schoolName,
-        type: onboardingData.schoolType,
         address: onboardingData.address,
         city: onboardingData.city,
         province: onboardingData.province,
-        student_count_estimate: onboardingData.studentCount,
       });
 
       if (schoolResult.success) {
-        // TODO: Create subscription with selected plan
-        // TODO: Send teacher invitations
+        // Plan selection and teacher invitations will be handled separately after onboarding
         
-        Alert.alert(
-          'Selamat!',
-          'Akun SchoolSync Anda telah berhasil dibuat. Selamat datang!',
-          [
-            {
-              text: 'Mulai Menggunakan',
-              onPress: () => router.replace('/(drawer)'),
-            },
-          ]
-        );
+        // Navigate directly to dashboard without showing popup
+        router.replace('/dashboard');
       } else {
         Alert.alert('Error', schoolResult.error || 'Gagal membuat sekolah');
       }
@@ -182,29 +170,12 @@ export default function OnboardingIndex() {
         );
       case 3:
         return (
-          <PlanSelectionStep
-            data={onboardingData}
-            onUpdate={updateOnboardingData}
-            onNext={handleNext}
-            onBack={handlePrevious}
-          />
-        );
-      case 4:
-        return (
-          <TeacherInviteStep
-            data={onboardingData}
-            onUpdate={updateOnboardingData}
-            onNext={handleNext}
-            onBack={handlePrevious}
-          />
-        );
-      case 5:
-        return (
           <WelcomeStep
             data={onboardingData}
             onComplete={completeOnboarding}
           />
         );
+      // Removed case 4 (TeacherInviteStep) and case 5 (moved WelcomeStep to case 3)
       default:
         return null;
     }
@@ -214,9 +185,7 @@ export default function OnboardingIndex() {
     switch (currentStep) {
       case 1: return 'Informasi Dasar';
       case 2: return 'Informasi Sekolah';
-      case 3: return 'Pilih Paket';
-      case 4: return 'Undang Guru';
-      case 5: return 'Selamat Datang';
+      case 3: return 'Selamat Datang';
       default: return '';
     }
   };

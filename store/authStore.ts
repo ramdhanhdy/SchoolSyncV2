@@ -7,12 +7,10 @@ export type UserRole = 'management' | 'teacher' | 'student' | 'parent';
 export interface School {
   id: string;
   name: string;
-  type?: string;
   address?: string;
   city?: string;
   province?: string;
   license_number?: string;
-  student_count_estimate?: number;
   created_at: string;
 }
 

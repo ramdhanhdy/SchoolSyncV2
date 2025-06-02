@@ -22,7 +22,7 @@ export default function AuthIndex() {
     if (user && session) {
       // Check if user has completed onboarding (has a school_id)
       if (profile?.school_id) {
-        router.replace('/(drawer)');
+        router.replace('/dashboard');
       } else {
         // User is authenticated but hasn't completed onboarding
         router.replace('/auth/onboarding');

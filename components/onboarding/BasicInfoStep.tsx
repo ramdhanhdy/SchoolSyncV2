@@ -16,18 +16,9 @@ interface BasicInfoStepProps {
   onNext: () => void;
 }
 
-const POSITION_OPTIONS = [
-  'Kepala Sekolah',
-  'Wakil Kepala Sekolah',
-  'Kepala Tata Usaha',
-  'Wakil Kepala Bidang',
-  'Pengurus Yayasan',
-  'Lainnya',
-];
+// Position options removed - user is already in management role
 
 export default function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepProps) {
-  const [showPositionDropdown, setShowPositionDropdown] = useState(false);
-  const [customPosition, setCustomPosition] = useState('');
 
   const validatePhone = (phone: string) => {
     // Indonesian phone number validation
@@ -47,37 +38,17 @@ export default function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepP
       return;
     }
 
-    if (!data.position.trim()) {
-      Alert.alert('Error', 'Mohon pilih posisi/jabatan');
-      return;
-    }
+    // Position validation removed - user is already in management role
 
     onNext();
   };
 
-  const handlePositionSelect = (position: string) => {
-    if (position === 'Lainnya') {
-      setShowPositionDropdown(false);
-      // Keep dropdown closed and let user type custom position
-    } else {
-      onUpdate({ position });
-      setShowPositionDropdown(false);
-      setCustomPosition('');
-    }
-  };
-
-  const handleCustomPositionSubmit = () => {
-    if (customPosition.trim()) {
-      onUpdate({ position: customPosition.trim() });
-      setCustomPosition('');
-    }
-  };
+  // Position handling functions removed - user is already in management role
 
   const isFormValid = 
     data.fullName.trim() &&
     data.phone.trim() &&
-    validatePhone(data.phone) &&
-    data.position.trim();
+    validatePhone(data.phone);
 
   return (
     <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
@@ -124,78 +95,7 @@ export default function BasicInfoStep({ data, onUpdate, onNext }: BasicInfoStepP
             )}
           </View>
 
-          {/* Position */}
-          <View style={styles.inputContainer}>
-            <Text style={styles.label}>Posisi/Jabatan *</Text>
-            
-            {/* Position Selector */}
-            <TouchableOpacity
-              style={styles.dropdownButton}
-              onPress={() => setShowPositionDropdown(!showPositionDropdown)}
-            >
-              <Text style={[
-                styles.dropdownButtonText,
-                !data.position && styles.placeholderText
-              ]}>
-                {data.position || 'Pilih posisi/jabatan Anda'}
-              </Text>
-              <Text style={styles.dropdownArrow}>
-                {showPositionDropdown ? '▲' : '▼'}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Dropdown Options */}
-            {showPositionDropdown && (
-              <View style={styles.dropdown}>
-                {POSITION_OPTIONS.map((position, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={[
-                      styles.dropdownOption,
-                      data.position === position && styles.dropdownOptionSelected
-                    ]}
-                    onPress={() => handlePositionSelect(position)}
-                  >
-                    <Text style={[
-                      styles.dropdownOptionText,
-                      data.position === position && styles.dropdownOptionTextSelected
-                    ]}>
-                      {position}
-                    </Text>
-                  </TouchableOpacity>
-                ))}
-              </View>
-            )}
-
-            {/* Custom Position Input */}
-            {data.position === 'Lainnya' || (!POSITION_OPTIONS.includes(data.position) && data.position) ? (
-              <View style={styles.customPositionContainer}>
-                <TextInput
-                  style={styles.input}
-                  placeholder="Masukkan posisi/jabatan Anda"
-                  value={data.position === 'Lainnya' ? customPosition : data.position}
-                  onChangeText={(value) => {
-                    if (data.position === 'Lainnya') {
-                      setCustomPosition(value);
-                    } else {
-                      onUpdate({ position: value });
-                    }
-                  }}
-                  onSubmitEditing={handleCustomPositionSubmit}
-                  autoCapitalize="words"
-                  autoCorrect={false}
-                />
-                {data.position === 'Lainnya' && (
-                  <TouchableOpacity
-                    style={styles.submitCustomButton}
-                    onPress={handleCustomPositionSubmit}
-                  >
-                    <Text style={styles.submitCustomButtonText}>✓</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            ) : null}
-          </View>
+          {/* Position field removed - user is already in management role */}
 
           {/* Info Box */}
           <View style={styles.infoBox}>

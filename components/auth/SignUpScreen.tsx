@@ -7,14 +7,12 @@ import {
   Platform,
   ScrollView,
   TouchableOpacity,
+  TextInput,
+  StyleSheet,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '../../store/authStore';
 import { router } from 'expo-router';
-import { Button, ButtonSpinner } from '~/components/ui/button';
-import { Input, InputField } from '~/components/ui/input';
-import { Card } from '~/components/ui/card';
-import ModernBackground from '../ui/ModernBackground';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SignUpScreenProps {
@@ -69,7 +67,12 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
         [
           {
             text: 'OK',
-            onPress: () => router.replace('/auth/onboarding'),
+            onPress: () => {
+              // Use setTimeout to ensure navigation happens after Alert is dismissed
+              setTimeout(() => {
+                router.replace('/auth/onboarding');
+              }, 100);
+            },
           },
         ]
       );
@@ -106,114 +109,110 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
   }, [error, clearError]);
 
   return (
-    <ModernBackground variant="auth">
-      <SafeAreaView className="flex-1">
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          className="flex-1"
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollView}
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-            contentContainerStyle={{ flexGrow: 1, justifyContent: 'center', padding: 20 }}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-          >
-            {/* Header */}
-            <View className="mb-10 mt-6">
-              <Text className="text-4xl font-bold text-typography-900 mb-4">
-                Buat Akun Baru
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>
+                Daftar Akun Baru
               </Text>
-              <Text className="text-lg text-typography-600 leading-7">
+              <Text style={styles.headerSubtitle}>
                 Buat akun dengan email dan password. Informasi lainnya akan dilengkapi setelah pendaftaran.
               </Text>
             </View>
 
             {/* Main Card */}
-            <Card variant="elevated" size="lg" className="p-6 bg-white shadow-lg mb-6">
-              <View className="space-y-6">
+            <View style={styles.card}>
+              <View style={styles.formContainer}>
                  {/* Email Input */}
-                 <View>
-                   <Text className="text-base font-semibold text-typography-900 mb-3">
+                 <View style={styles.inputGroup}>
+                   <Text style={styles.inputLabel}>
                      Email *
                    </Text>
-                   <Input variant="outline" size="lg" className="bg-background-50 border-border-300">
-                     <InputField
-                       placeholder="nama@email.com"
-                       value={formData.email}
-                       onChangeText={(text) => setFormData(prev => ({ ...prev, email: text }))}
-                       keyboardType="email-address"
-                       autoCapitalize="none"
-                       autoCorrect={false}
-                       className="text-typography-900"
-                     />
-                   </Input>
+                   <TextInput
+                     style={[styles.input, formData.email && !validateEmail(formData.email) && styles.inputError]}
+                     placeholder="nama@email.com"
+                     value={formData.email}
+                     onChangeText={(text) => setFormData(prev => ({ ...prev, email: text }))}
+                     keyboardType="email-address"
+                     autoCapitalize="none"
+                     autoCorrect={false}
+                     placeholderTextColor="#9CA3AF"
+                   />
                    {formData.email && !validateEmail(formData.email) && (
-                     <Text className="text-sm text-error-600 mt-2">
+                     <Text style={styles.errorText}>
                        Format email tidak valid
                      </Text>
                    )}
                  </View>
 
                  {/* Password Input */}
-                 <View>
-                   <Text className="text-base font-semibold text-typography-900 mb-3">
+                 <View style={styles.inputGroup}>
+                   <Text style={styles.inputLabel}>
                      Password *
                    </Text>
-                   <Input variant="outline" size="lg" className="bg-background-50 border-border-300">
-                     <InputField
-                       placeholder="Minimal 6 karakter"
-                       value={formData.password}
-                       onChangeText={(text) => setFormData(prev => ({ ...prev, password: text }))}
-                       secureTextEntry
-                       className="text-typography-900"
-                     />
-                   </Input>
+                   <TextInput
+                     style={[styles.input, formData.password && !validatePassword(formData.password) && styles.inputError]}
+                     placeholder="Minimal 6 karakter"
+                     value={formData.password}
+                     onChangeText={(text) => setFormData(prev => ({ ...prev, password: text }))}
+                     secureTextEntry
+                     placeholderTextColor="#9CA3AF"
+                   />
                    {formData.password && !validatePassword(formData.password) && (
-                     <Text className="text-sm text-error-600 mt-2">
+                     <Text style={styles.errorText}>
                        Password minimal 6 karakter
                      </Text>
                    )}
                  </View>
 
                  {/* Confirm Password Input */}
-                 <View>
-                   <Text className="text-base font-semibold text-typography-900 mb-3">
+                 <View style={styles.inputGroup}>
+                   <Text style={styles.inputLabel}>
                      Konfirmasi Password *
                    </Text>
-                   <Input variant="outline" size="lg" className="bg-background-50 border-border-300">
-                     <InputField
-                       placeholder="Ulangi password"
-                       value={formData.confirmPassword}
-                       onChangeText={(text) => setFormData(prev => ({ ...prev, confirmPassword: text }))}
-                       secureTextEntry
-                       className="text-typography-900"
-                     />
-                   </Input>
+                   <TextInput
+                     style={[styles.input, formData.confirmPassword && formData.password !== formData.confirmPassword && styles.inputError]}
+                     placeholder="Ulangi password"
+                     value={formData.confirmPassword}
+                     onChangeText={(text) => setFormData(prev => ({ ...prev, confirmPassword: text }))}
+                     secureTextEntry
+                     placeholderTextColor="#9CA3AF"
+                   />
                    {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                     <Text className="text-sm text-error-600 mt-2">
+                     <Text style={styles.errorText}>
                        Password tidak cocok
                      </Text>
                    )}
                  </View>
 
                  {/* Terms and Conditions */}
-                 <View className="flex-row items-start space-x-3 mt-2">
+                 <View style={styles.termsContainer}>
                    <TouchableOpacity
                      onPress={() => setAcceptedTerms(!acceptedTerms)}
-                     className="mt-1"
+                     style={styles.checkboxContainer}
                    >
-                     <View className={`w-5 h-5 border-2 rounded ${acceptedTerms ? 'bg-primary-500 border-primary-500' : 'border-border-400'} items-center justify-center`}>
+                     <View style={[styles.checkbox, acceptedTerms && styles.checkboxChecked]}>
                        {acceptedTerms && (
                          <Ionicons name="checkmark" size={12} color="white" />
                        )}
                      </View>
                    </TouchableOpacity>
-                   <Text className="text-sm text-typography-600 flex-1 leading-6">
+                   <Text style={styles.termsText}>
                      Saya menyetujui{' '}
-                     <Text className="text-primary-600 font-semibold">
+                     <Text style={styles.termsLink}>
                        Syarat dan Ketentuan
                      </Text>
                      {' '}serta{' '}
-                     <Text className="text-primary-600 font-semibold">
+                     <Text style={styles.termsLink}>
                        Kebijakan Privasi
                      </Text>
                      {' '}SchoolSync
@@ -221,23 +220,22 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
                  </View>
 
                  {/* Sign Up Button */}
-                 <Button
-                   size="lg"
-                   className="bg-primary-500 mt-8 py-4"
+                 <TouchableOpacity
+                   style={[styles.signUpButton, (!isFormValid || loading) && styles.signUpButtonDisabled]}
                    onPress={handleSignUp}
                    disabled={!isFormValid || loading}
                  >
-                   <Text className="text-white font-semibold text-lg">
+                   <Text style={styles.signUpButtonText}>
                      {loading ? 'Mendaftar...' : 'Daftar Sekarang'}
                    </Text>
-                 </Button>
+                 </TouchableOpacity>
 
                  {/* Login Link */}
-                 <View className="items-center mt-8">
-                   <Text className="text-typography-600 text-base">
+                 <View style={styles.loginLinkContainer}>
+                   <Text style={styles.loginText}>
                      Sudah punya akun?{' '}
                      <Text
-                       className="text-primary-600 font-semibold"
+                       style={styles.loginLink}
                        onPress={onNavigateToLogin}
                      >
                        Masuk di sini
@@ -245,10 +243,146 @@ export default function SignUpScreen({ onNavigateToLogin }: SignUpScreenProps) {
                    </Text>
                  </View>
               </View>
-            </Card>
+            </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
-    </ModernBackground>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  scrollView: {
+    flexGrow: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+  },
+  header: {
+    marginBottom: 32,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#111827',
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  headerSubtitle: {
+    fontSize: 16,
+    color: '#6B7280',
+    lineHeight: 24,
+    textAlign: 'center',
+  },
+  card: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 12,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 4,
+    marginBottom: 24,
+  },
+  formContainer: {
+    gap: 24,
+  },
+  inputGroup: {
+    marginBottom: 4,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#111827',
+    marginBottom: 12,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    fontSize: 16,
+    backgroundColor: '#F9FAFB',
+    color: '#111827',
+  },
+  inputError: {
+    borderColor: '#EF4444',
+  },
+  errorText: {
+    fontSize: 14,
+    color: '#EF4444',
+    marginTop: 8,
+  },
+  termsContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 8,
+    gap: 12,
+  },
+  checkboxContainer: {
+    marginTop: 4,
+  },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderWidth: 2,
+    borderColor: '#9CA3AF',
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  checkboxChecked: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#3B82F6',
+  },
+  termsText: {
+    fontSize: 14,
+    color: '#6B7280',
+    lineHeight: 20,
+    flex: 1,
+  },
+  termsLink: {
+    color: '#3B82F6',
+    fontWeight: '600',
+  },
+  signUpButton: {
+    backgroundColor: '#3B82F6',
+    borderRadius: 8,
+    paddingVertical: 16,
+    alignItems: 'center',
+    marginTop: 32,
+  },
+  signUpButtonDisabled: {
+    backgroundColor: '#9CA3AF',
+  },
+  signUpButtonText: {
+    color: '#FFFFFF',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  loginLinkContainer: {
+    alignItems: 'center',
+    marginTop: 32,
+  },
+  loginText: {
+    fontSize: 16,
+    color: '#6B7280',
+  },
+  loginLink: {
+    color: '#3B82F6',
+    fontWeight: '600',
+  },
+});
