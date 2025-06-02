@@ -27,3 +27,6 @@ android
 # Repomix files
 .repomix/
 repomix-output.txt.md
+
+# Trae files
+.trae/
