@@ -1,6 +1,6 @@
 # Lessons Learned - SchoolSync Development
 
-*Last Updated: May 31, 2025*
+*Last Updated: June 2, 2025*
 
 This document tracks issues encountered during the SchoolSync mobile app development and their solutions for future reference.
 
@@ -52,7 +52,70 @@ module.exports = config;
 
 ## 🔐 Authentication & Database
 
-### Issue #2: Supabase RLS Policy Configuration
+### Issue #2: Supabase Auth Schema and User Profiles
+
+**Date:** June 2025  
+**Severity:** Medium  
+**Platform:** Database Architecture
+
+#### Problem Description
+Supabase stores authentication users in a separate `auth` schema, which is hidden by default in the dashboard. This can lead to confusion when implementing user profiles, as the auth users are not visible in the default public schema.
+
+#### Solution
+Implemented a proper user profile system with these components:
+
+1. Created a `public.users` table that extends `auth.users` with profile fields:
+```sql
+CREATE TABLE users (
+    id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+    -- Additional profile fields
+    school_id UUID REFERENCES schools(id) ON DELETE CASCADE,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    full_name VARCHAR(255) NOT NULL,
+    phone VARCHAR(20),
+    role user_role NOT NULL,
+    -- Other fields...
+);
+```
+
+2. Added a database trigger to auto-create profiles when users sign up:
+```sql
+CREATE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, email, full_name, role)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.email),
+    COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'student'::user_role)
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+```
+
+3. Updated client code to load user profiles after authentication:
+```typescript
+// In signUp function
+if (data.user) {
+  set({ user: data.user, session: data.session });
+  await get().loadUserProfile(); // Load profile after signup
+  return { success: true };
+}
+```
+
+#### Best Practices
+- Always create a separate profile table in the public schema linked to auth.users
+- Use database triggers to automatically create/update profiles
+- Implement proper RLS policies on the profile table
+- Ensure client code loads profiles after authentication events
+
+### Issue #3: Supabase RLS Policy Configuration
 
 **Date:** December 2024  
 **Severity:** Medium  
@@ -83,7 +146,7 @@ CREATE POLICY "Users can view their own school" ON schools
 
 ## 🎨 UI/UX Development
 
-### Issue #3: TypeScript Interface Mismatches
+### Issue #4: TypeScript Interface Mismatches
 
 **Date:** December 2024  
 **Severity:** Low  
@@ -106,7 +169,7 @@ Mismatched interfaces between onboarding components and data store caused TypeSc
 
 ## 📦 Package Management
 
-### Issue #4: Dependency Version Conflicts
+### Issue #5: Dependency Version Conflicts
 
 **Date:** December 2024  
 **Severity:** Medium  
@@ -182,5 +245,5 @@ Potential conflicts between Expo SDK version and third-party packages.
 
 ---
 
-**Last Updated:** December 2024  
+**Last Updated:** June 2025  
 **Contributors:** Development Team

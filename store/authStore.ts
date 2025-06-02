@@ -133,6 +133,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       if (data.user) {
         set({ user: data.user, session: data.session });
+        await get().loadUserProfile();
         return { success: true };
       }
 

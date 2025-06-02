@@ -74,10 +74,7 @@ export default function LoginScreen({
           {/* Header */}
           <View className="mb-12 mt-8">
             <Text className="text-3xl font-bold text-typography-900 mb-3">
-              Welcome Back
-            </Text>
-            <Text className="text-base text-typography-600 mb-8">
-              Sign in to your account to continue
+              Login to your account
             </Text>
           </View>
 
@@ -176,7 +173,7 @@ export default function LoginScreen({
           >
             {loading && <ButtonSpinner className="mr-2" />}
             <ButtonText className="font-semibold text-base">
-              Sign In
+              Login
             </ButtonText>
           </Button>
 
@@ -207,7 +204,7 @@ export default function LoginScreen({
             </Text>
             <TouchableOpacity onPress={onNavigateToSignUp}>
               <Text className="text-base text-primary-600 font-semibold">
-                Sign Up
+                Sign up
               </Text>
             </TouchableOpacity>
           </View>
