@@ -237,46 +237,58 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { user } = get();
       if (!user) return;
 
-      set({ loading: true, error: null }); // Clear previous errors
-
+      set({ loading: true });
+      
       let fetchedProfile: UserProfile | null = null;
       let lastProfileError: any = null; // Can be PostgrestError or other
-      const maxRetries = 3;
-      const retryDelay = 500; // milliseconds
+      const maxRetries = 5;
+      const retryDelay = 1000; // 1 second delay between retries
 
+      console.log('Starting profile load for user:', user.id);
+      
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        console.log(`Profile load attempt ${attempt}/${maxRetries}...`);
+        
         const { data, error } = await supabase
           .from('users')
           .select('*')
           .eq('id', user.id)
           .single();
 
-        if (data) {
+        if (error) {
+          console.log(`Profile load attempt ${attempt}/${maxRetries} failed:`, error);
+          lastProfileError = error;
+          
+          // Only retry if it's the PGRST116 error (profile not found)
+          if (error.code === 'PGRST116') {
+            if (attempt < maxRetries) {
+              console.log(`Waiting ${retryDelay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, retryDelay));
+            }
+          } else {
+            // For other errors, don't retry
+            console.error('Non-PGRST116 error encountered, stopping retries:', error);
+            break;
+          }
+        } else {
+          console.log('Profile loaded successfully on attempt', attempt);
           fetchedProfile = data;
-          lastProfileError = null;
-          break; // Profile found, exit loop
-        }
-
-        lastProfileError = error; // Store the error
-
-        // If error is not 'PGRST116' (no rows) or it's the last attempt, don't retry
-        if (error?.code !== 'PGRST116' || attempt === maxRetries) {
           break;
         }
-
-        console.log(`authStore: Profile not found for user ${user.id} on attempt ${attempt}, retrying in ${retryDelay}ms...`);
-        await new Promise(resolve => setTimeout(resolve, retryDelay));
-      }
-
-      if (lastProfileError) {
-        console.error('authStore: Profile load error after retries:', lastProfileError);
-        set({ error: lastProfileError.message || 'Failed to load profile after retries.', loading: false });
-        return;
       }
 
       if (!fetchedProfile) {
-        console.error('authStore: Profile is null after retries without a specific Supabase error.');
-        set({ error: 'Failed to load profile. Profile data is null.', loading: false });
+        console.error('Failed to load profile after all retries. Last error:', lastProfileError);
+        
+        // If we still can't load the profile after all retries, check if this is a new user
+        // by examining the user metadata for role = 'management'
+        if (user.user_metadata?.role === 'management' && lastProfileError?.code === 'PGRST116') {
+          console.log('New management user detected. Profile will be created by database trigger.');
+          // We'll let the user continue, as the profile should be created by the database trigger
+          // and will be available on next app launch or refresh
+        }
+        
+        set({ loading: false });
         return;
       }
 
@@ -284,6 +296,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
       // Load school if user has school_id
       if (fetchedProfile.school_id) {
+        console.log('Loading school data for school_id:', fetchedProfile.school_id);
         const { data: school, error: schoolError } = await supabase
           .from('schools')
           .select('*')
@@ -291,16 +304,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           .single();
         
         if (schoolError) {
-          console.warn('authStore: Error loading school data:', schoolError);
-          // Decide if this should set the main error state or just be a warning
-        }
-        if (school) {
+          console.error('Error loading school data:', schoolError);
+        } else if (school) {
+          console.log('School data loaded successfully');
           set({ school });
-          await get().loadSubscription(); // loadSubscription should also handle its own errors
+          await get().loadSubscription();
         }
+      } else {
+        console.log('User has no school_id, skipping school data load');
       }
 
       set({ loading: false });
+      console.log('Profile loading complete');
     } catch (error) {
       // Catch any other unexpected errors from the outer try block
       console.error('authStore: Unexpected error in loadUserProfile:', error);

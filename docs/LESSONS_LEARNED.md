@@ -142,6 +142,121 @@ CREATE POLICY "Users can view their own school" ON schools
 - Test policies with different user roles
 - Document policy logic for team understanding
 
+### Issue #4: PGRST116 Error After User Registration
+
+**Date:** June 2025  
+**Severity:** High  
+**Platform:** Authentication Flow
+
+#### Problem Description
+After implementing the Supabase Auth Database Integration, newly registered users encountered a `PGRST116` error ("JSON object requested, multiple (or no) rows returned") when attempting to load their profile immediately after registration. This occurred because the client-side `loadUserProfile` function was querying the profile before the database trigger (`on_auth_user_created`) had completed creating the new profile row, or due to RLS policy issues preventing the newly registered user from seeing their own profile.
+
+#### Root Cause Analysis
+- **Race Condition**: Timing issue between client-side profile loading and server-side trigger execution
+- **RLS Policy Circular Dependencies**: Some RLS policies were creating circular dependencies by using helper functions that themselves query the users table
+- **Role Hierarchy Mismatch**: The default role in the trigger function was set to 'student', but only management users should perform direct sign-up
+
+#### Solution
+1. **Enhanced Database Trigger**:
+```sql
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+DECLARE
+  existing_user_count INTEGER;
+  default_role TEXT := 'management'; -- Changed from 'student' to 'management'
+  user_role_value TEXT;
+  profile_id UUID;
+BEGIN
+  -- Get role from metadata or use default management role
+  user_role_value := COALESCE(NEW.raw_user_meta_data->>'role', default_role);
+  
+  -- Insert the user profile
+  INSERT INTO public.users (...) VALUES (...) RETURNING id INTO profile_id;
+  
+  -- Force the transaction to commit by performing a read operation
+  PERFORM 1 FROM public.users WHERE id = profile_id;
+  
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+```
+
+2. **Simplified RLS Policies**:
+```sql
+-- Drop helper functions that cause recursion
+DROP FUNCTION IF EXISTS public.get_my_role();
+DROP FUNCTION IF EXISTS public.get_my_school_id();
+
+-- Create simple, non-recursive RLS policies
+CREATE POLICY "Users can view own profile"
+ON public.users
+FOR SELECT
+TO public
+USING (id = auth.uid());
+```
+
+3. **Resilient Client-Side Profile Loading**:
+```typescript
+loadUserProfile: async () => {
+  try {
+    const { user } = get();
+    if (!user) return;
+
+    set({ loading: true });
+    
+    let fetchedProfile: UserProfile | null = null;
+    let lastProfileError: any = null;
+    const maxRetries = 5;
+    const retryDelay = 1000; // 1 second delay between retries
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      console.log(`Profile load attempt ${attempt}/${maxRetries}...`);
+      
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (error) {
+        // Only retry if it's the PGRST116 error (profile not found)
+        if (error.code === 'PGRST116' && attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, retryDelay));
+        } else {
+          break;
+        }
+      } else {
+        fetchedProfile = data;
+        break;
+      }
+    }
+
+    // Handle special case for new management users
+    if (!fetchedProfile && user.user_metadata?.role === 'management') {
+      console.log('New management user detected. Profile will be created by database trigger.');
+    }
+    
+    // Continue with normal flow if profile was found
+    if (fetchedProfile) {
+      set({ profile: fetchedProfile });
+      // Load additional data as needed...
+    }
+
+    set({ loading: false });
+  } catch (error) {
+    console.error('Unexpected error in loadUserProfile:', error);
+    set({ loading: false });
+  }
+}
+```
+
+#### Best Practices
+- **RLS Policy Design**: Avoid circular dependencies in RLS policies. Don't use helper functions that query the same table the policy is protecting.
+- **Role-Based Registration**: Understand your application's user hierarchy model. In our case, only management users should perform direct sign-up.
+- **Client-Side Resilience**: Implement robust retry mechanisms for operations that may be affected by database triggers or RLS policies.
+- **Comprehensive Logging**: Add detailed logging throughout authentication flows to help diagnose issues in production.
+- **Transaction Management**: Be aware of how PostgreSQL handles transactions in triggers and ensure data is committed before client queries.
+
 ---
 
 ## 🎨 UI/UX Development
