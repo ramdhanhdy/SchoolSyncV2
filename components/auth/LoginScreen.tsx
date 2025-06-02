@@ -67,8 +67,7 @@ export default function LoginScreen({
         style={styles.keyboardView}
       >
         <ScrollView 
-          style={styles.scrollView}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={styles.scrollView}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
