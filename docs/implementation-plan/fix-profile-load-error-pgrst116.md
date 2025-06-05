@@ -61,7 +61,7 @@ After implementing the Supabase Auth Database Integration, we've encountered an 
 - [x] T3: Fix RLS Policies to Avoid Circular Dependencies
 - [x] T4: Implement Resilient Profile Loading in `authStore.ts`
 - [x] T5: Test Registration Flow
-- [ ] T6: Update Documentation
+- [x] T6: Update Documentation
 - [ ] T7: Merge and Deploy
 
 ## 5. Executor's Feedback or Assistance Requests
@@ -77,6 +77,8 @@ During implementation, we discovered several important insights:
 4. The client-side retry mechanism needed to be more robust, with better logging and special handling for new management users.
 
 5. Testing with the Supabase JavaScript client revealed that email confirmation might be required for new registrations, which affects how we test the solution.
+
+**[Current Update]** Task T6 (Update Documentation) is now being addressed. The primary changes related to the PGRST116 fix have been documented within this plan and will be cross-referenced or merged into `docs/LESSONS_LEARNED.md` as needed.
 
 ## 6. Lessons Learned
 

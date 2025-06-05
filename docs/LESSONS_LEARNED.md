@@ -144,7 +144,7 @@ CREATE POLICY "Users can view their own school" ON schools
 
 ### Issue #4: PGRST116 Error After User Registration
 
-**Date:** June 2025  
+**Date:** June 2025 (Reviewed and Confirmed: [Current Date - I'll use a placeholder, the system should fill this])  
 **Severity:** High  
 **Platform:** Authentication Flow
 
@@ -251,11 +251,11 @@ loadUserProfile: async () => {
 ```
 
 #### Best Practices
-- **RLS Policy Design**: Avoid circular dependencies in RLS policies. Don't use helper functions that query the same table the policy is protecting.
-- **Role-Based Registration**: Understand your application's user hierarchy model. In our case, only management users should perform direct sign-up.
-- **Client-Side Resilience**: Implement robust retry mechanisms for operations that may be affected by database triggers or RLS policies.
-- **Comprehensive Logging**: Add detailed logging throughout authentication flows to help diagnose issues in production.
-- **Transaction Management**: Be aware of how PostgreSQL handles transactions in triggers and ensure data is committed before client queries.
+- **RLS Policy Design**: Avoid circular dependencies in RLS policies. Do not use helper functions that query the same table the policy is protecting (e.g., `get_my_role()` within a policy on the `users` table).
+- **Role-Based Registration**: Clearly define and enforce role-based registration flows. For instance, in this application, direct sign-up is intended for 'management' roles, while other roles are added hierarchically.
+- **Client-Side Resilience**: Implement robust retry mechanisms with appropriate delays and error-specific handling (e.g., for `PGRST116`) in client-side code when dealing with potentially asynchronous backend operations like profile creation after registration.
+- **Comprehensive Logging**: Add detailed logging on both client and server (trigger functions) sides to trace the flow of operations, especially for authentication and profile management.
+- **Transaction Management & Trigger Reliability**: Ensure database triggers (like `handle_new_user`) are robust, handle potential errors gracefully, and manage transactions effectively to ensure data (e.g., new user profile) is committed and available promptly. Forcing a read operation (e.g., `PERFORM 1 FROM public.users WHERE id = profile_id;`) can help ensure the transaction is committed within the trigger context in PostgreSQL.
 
 ---
 

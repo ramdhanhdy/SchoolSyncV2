@@ -10,24 +10,24 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useAuthStore } from '../../../store/authStore';
-import BasicInfoStep from '../../../components/onboarding/BasicInfoStep';
-import SchoolInfoStep from '../../../components/onboarding/SchoolInfoStep';
+import CombinedInfoStep from '../../../components/onboarding/CombinedInfoStep';
+// Removed BasicInfoStep and SchoolInfoStep - combined into CombinedInfoStep
 // Removed PlanSelectionStep and TeacherInviteStep imports - simplified onboarding
 import WelcomeStep from '../../../components/onboarding/WelcomeStep';
 
 export interface OnboardingData {
   // Basic Info
   fullName: string;
-  phone: string;
+  phone?: string; // Optional - removed from onboarding UI
   position: string; // Auto-set to 'management' - not collected in UI
   
   // School Info
   schoolName: string;
-  schoolType: string; // Optional - can be set later
-  address: string; // Optional - can be set later
-  city: string;
-  province: string;
-  studentCount: number; // Optional - can be set later
+  schoolType?: string; // Optional - can be set later
+  address?: string; // Optional - removed from onboarding UI
+  city?: string; // Optional - removed from onboarding UI
+  province?: string; // Optional - removed from onboarding UI
+  studentCount?: number; // Optional - can be set later
   
   // Plan Selection - removed from onboarding, will use default
   // selectedPlan: 'starter' | 'professional' | 'enterprise';
@@ -40,20 +40,21 @@ export interface OnboardingData {
   // }[];
 }
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 2;
 
 export default function OnboardingIndex() {
   const [currentStep, setCurrentStep] = useState(1);
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     fullName: '',
-    phone: '',
     position: 'management', // Auto-set since user is already in management role
     schoolName: '',
-    schoolType: '', // Will be set later or use default
-    address: '', // Will be set later
-    city: '',
-    province: '',
-    studentCount: 0, // Will be set later
+    // Optional fields - will be set later or remain undefined
+    // phone: undefined,
+    // schoolType: undefined,
+    // address: undefined,
+    // city: undefined,
+    // province: undefined,
+    // studentCount: undefined,
     // selectedPlan: 'starter', // Will use default plan
     // teacherInvites: [], // Will be handled separately
   });
@@ -78,7 +79,7 @@ export default function OnboardingIndex() {
       setOnboardingData(prev => ({
         ...prev,
         fullName: profile.full_name || '',
-        phone: profile.phone || '',
+        // phone field removed from onboarding - will be handled in profile later
       }));
     }
   }, [user, profile]);
@@ -124,15 +125,16 @@ export default function OnboardingIndex() {
       // Update user profile
       await updateProfile({
         full_name: onboardingData.fullName,
-        phone: onboardingData.phone,
+        // phone field removed from onboarding - will be handled in profile later
       });
 
-      // Create school
+      // Create school with minimal required information
       const schoolResult = await createSchool({
         name: onboardingData.schoolName,
-        address: onboardingData.address,
-        city: onboardingData.city,
-        province: onboardingData.province,
+        // Optional fields removed from onboarding - can be added later
+        // address: onboardingData.address,
+        // city: onboardingData.city,
+        // province: onboardingData.province,
       });
 
       if (schoolResult.success) {
@@ -153,7 +155,7 @@ export default function OnboardingIndex() {
     switch (currentStep) {
       case 1:
         return (
-          <BasicInfoStep
+          <CombinedInfoStep
             data={onboardingData}
             onUpdate={updateOnboardingData}
             onNext={handleNext}
@@ -161,21 +163,13 @@ export default function OnboardingIndex() {
         );
       case 2:
         return (
-          <SchoolInfoStep
-            data={onboardingData}
-            onUpdate={updateOnboardingData}
-            onNext={handleNext}
-            onBack={handlePrevious}
-          />
-        );
-      case 3:
-        return (
           <WelcomeStep
             data={onboardingData}
             onComplete={completeOnboarding}
           />
         );
-      // Removed case 4 (TeacherInviteStep) and case 5 (moved WelcomeStep to case 3)
+      // Removed BasicInfoStep and SchoolInfoStep - combined into CombinedInfoStep
+      // Removed PlanSelectionStep and TeacherInviteStep - simplified onboarding
       default:
         return null;
     }
@@ -184,8 +178,7 @@ export default function OnboardingIndex() {
   const getStepTitle = () => {
     switch (currentStep) {
       case 1: return 'Informasi Dasar';
-      case 2: return 'Informasi Sekolah';
-      case 3: return 'Selamat Datang';
+      case 2: return 'Selamat Datang';
       default: return '';
     }
   };
