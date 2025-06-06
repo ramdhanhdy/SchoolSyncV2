@@ -25,8 +25,8 @@ Status: T1-T4 Completed. T5 (Investigate new 'name' error) in progress.
 All previous tasks in the scratchpad are now marked as complete.
 ## Current Task Focus
 
-- **Task Name**: Finalize and Merge `fix-displayname-error` Task
-- **Implementation Plan**: [./implementation-plan/fix-displayname-error.md](./implementation-plan/fix-displayname-error.md)
-- **Status**: Runtime errors for mock data resolved (T1-T5). USER reminder to merge this work before starting new `PGRST116` fix. Need to address T6 (lint errors for `mockPriorityItems`) and then merge the feature branch for `fix-displayname-error`.
+- **Task Name**: Fix PGRST116 Error on School Data Load
+- **Implementation Plan**: [./implementation-plan/fix-profile-load-error-pgrst116.md](./implementation-plan/fix-profile-load-error-pgrst116.md)
+- **Status**: Previous task `fix-displayname-error` completed and merged into `master`. New branch `bugfix/pgrst116-school-load` created. Ready to address the PGRST116 error. Prioritizing T2 (RLS review) due to recent RLS enablement on `schools` table.
 
 <!-- Add new task references above this line -->
