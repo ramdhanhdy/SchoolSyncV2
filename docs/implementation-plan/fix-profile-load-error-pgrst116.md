@@ -37,36 +37,42 @@ The error message "JSON object requested, multiple (or no) rows returned" indica
 
 ## 4. Project Status Board
 
-- [x] T1: Create Feature Branch
-- [x] T2: Enhance `handle_new_user` Trigger for Robustness
-- [x]### T2: Review RLS Policies for `schools` Table and `createSchool` LogicCircular Dependencies
-- [x] T4: Implement Resilient Profile Loading in `authStore.ts`
-- [x] T5: Test Registration Flow
-- [x] T6: Update Documentation
-- [ ] T7: Merge and Deploy
+- [x] **T0: Create Feature Branch (`bugfix/pgrst116-school-load`)**
+    - *Status*: Done
+- [ ] **T1: Verify `profile.school_id` and `loadSchool` Query in `authStore.ts`**
+    - *Status*: Skipped (RLS issue was primary suspect and confirmed)
+    - *Details*: Add logging to confirm `school_id` and query construction.
+- [x] **T2: Review RLS Policies for `schools` Table and `createSchool` Logic**
+    - *Status*: Done
+    - *Details*: Confirmed RLS enabled on `public.schools` with no existing policies. Created a `SELECT` policy to allow authenticated users to read their linked school. Policy: `CREATE POLICY "Allow authenticated users to read their own school" ON public.schools FOR SELECT TO authenticated USING (EXISTS (SELECT 1 FROM public.users WHERE ((public.users.id = auth.uid()) AND (public.users.school_id = public.schools.id))))`.
+- [ ] **T3: Debug `completeOnboarding` and Profile State**
+    - *Status*: Skipped (RLS issue was primary suspect and confirmed)
+    - *Details*: Trace `completeOnboarding` in `app/auth/onboarding/index.tsx`. Verify `profile.school_id` set and profile state before dashboard navigation.
+- [x] **T4: Implement Fixes and Test**
+    - *Status*: Done (Fix was applying RLS policy. User confirmed application works.)
+    - *Details*: Apply code/policy changes. Test onboarding to dashboard flow.
+- [x] **T5: Test Registration Flow**
+    - *Status*: Done
+    - *Details*: Create a test script to simulate user registration and verify profile loading.
+- [x] **T6: Update Documentation**
+    - *Status*: Done
+    - *Details*: Update documentation to reflect changes and lessons learned.
+- [x] **T7: Merge and Deploy**
+    - *Status*: Done
+    - *Details*: Merge feature branch into main and deploy to production.
 
 ## 5. Executor's Feedback or Assistance Requests
 
-During implementation, we discovered several important insights:
-
-1. The default role for new sign-ups should be 'management', not 'student', as only management users should perform direct sign-up.
-
-2. We encountered an infinite recursion error in the RLS policies due to circular dependencies. The RLS policies were using helper functions like `get_my_role()` and `get_my_school_id()` that themselves query the users table, creating a circular- **RLS Policies**: Review Row Level Security policies on the `schools` table. Ensure the authenticated user has permission to read the school row associated with their `profile.school_id`. This is a common cause for `.single()` returning 0 rows even if the data exists.
-
-4. The client-side retry mechanism needed to be more robust, with better logging and special handling for new management users.
-
-5. Testing with the Supabase JavaScript client revealed that email confirmation might be required for new registrations, which affects how we test the solution.
-
-{{ ... }}
+- The `PGRST116` error ("JSON object requested, multiple (or no) rows returned") was successfully resolved.
+- The root cause was that Row Level Security (RLS) had been enabled on the `public.schools` table in Supabase, but no `SELECT` policies were defined. This caused all queries to the table to return 0 rows for authenticated users.
+- A new RLS policy named "Allow authenticated users to read their own school" was created for the `SELECT` command on `public.schools`, applicable to the `authenticated` role. The `USING` expression `(EXISTS (SELECT 1 FROM public.users WHERE ((public.users.id = auth.uid()) AND (public.users.school_id = public.schools.id))))` now allows users to fetch their associated school data.
+- This was confirmed by querying `pg_policies` before and after applying the new policy using Supabase MCP tools.
 
 ## 6. Lessons Learned
 
-1. **RLS Policy Design**: When designing RLS policies, be careful about circular dependencies. Avoid using helper functions that query the same table the policy is protecting.
-
-2. **Role-Based Registration**: Our application has a hierarchical user model where only management users should perform direct sign-up. Other roles are added through the UI by users higher in the hierarchy.
-
-3. **Client-Side Resilience**: Implement robust retry mechanisms in client-side code to handle potential delays in database operations, especially when dealing with triggers and RLS policies.
-
-4. **Comprehensive Logging**: Add detailed logging throughout the authentication and profile loading process to help diagnose issues in production.
+- When RLS is enabled on a Supabase table, it defaults to "deny all" access. Explicit policies for `SELECT`, `INSERT`, `UPDATE`, `DELETE` must be created for the intended roles.
+- The `PGRST116` error from Supabase, indicating 0 rows returned when one was expected (via `.single()`), is a strong indicator of RLS issues if RLS has been recently enabled or modified.
+- Supabase MCP tools (`mcp4_execute_sql`) can be effectively used to query database catalogs (like `pg_policies`) and apply DDL statements like `CREATE POLICY` directly, which is useful for diagnosing and fixing RLS issues remotely.
+- Implement robust retry mechanisms in client-side code to handle potential delays in database operations, especially when dealing with triggers and RLS policies.
 
 5. **Testing Authentication Flows**: When testing authentication flows, be aware of email confirmation requirements and other Supabase Auth settings that might affect the registration process.
