@@ -10,7 +10,7 @@ type AuthScreen = 'login' | 'signup' | 'forgot-password';
 
 export default function AuthIndex() {
   const [currentScreen, setCurrentScreen] = useState<AuthScreen>('login');
-  const { user, session, profile, initialize } = useAuthStore();
+  const { user, session, profile, school, loading, initialize } = useAuthStore();
 
   useEffect(() => {
     // Initialize auth store
@@ -18,17 +18,30 @@ export default function AuthIndex() {
   }, [initialize]);
 
   useEffect(() => {
-    // Redirect based on user authentication and onboarding status
-    if (user && session) {
-      // Check if user has completed onboarding (has a school_id)
-      if (profile?.school_id) {
-        router.replace('/dashboard');
-      } else {
-        // User is authenticated but hasn't completed onboarding
-        router.replace('/auth/onboarding');
-      }
+        // Only proceed if auth initialization is complete
+    if (loading) {
+            return; 
     }
-  }, [user, session, profile]);
+
+    if (user && session) {
+      if (profile?.full_name && profile?.school_id && school?.id) {
+        // User is authenticated, profile is loaded with name and school_id, and school data is loaded
+                router.replace('/dashboard');
+      } else if (profile?.full_name && !profile?.school_id) {
+        // User is authenticated, profile loaded, but no school_id (implies onboarding needed)
+        // This also covers cases where school_id might exist but school object itself hasn't loaded yet, though 'loading' should ideally prevent this.
+                router.replace('/auth/onboarding');
+      } else if (!profile && user && session) {
+        // User authenticated, but profile hasn't loaded (or failed).
+                router.replace('/auth/onboarding');
+      } else {
+        // User not fully authenticated or profile/school is missing critical info for dashboard.
+        // Stays on the current auth screen (login/signup) if no other condition met.
+              }
+    } else {
+      // No user or session, stay on auth screen (login/signup)
+          }
+  }, [user, session, profile, school, loading, router, initialize]);
 
   const handleNavigateToSignUp = () => {
     setCurrentScreen('signup');

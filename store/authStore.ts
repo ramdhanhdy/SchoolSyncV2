@@ -233,7 +233,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   loadUserProfile: async () => {
     try {
       const { user } = get();
-      if (!user) return;
+      if (!user) {
+        return;
+      }
 
       set({ loading: true });
       
@@ -242,11 +244,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const maxRetries = 5;
       const retryDelay = 1000; // 1 second delay between retries
 
-      console.log('Starting profile load for user:', user.id);
-      
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
-        console.log(`Profile load attempt ${attempt}/${maxRetries}...`);
-        
         const { data, error } = await supabase
           .from('users')
           .select('*')
@@ -254,13 +252,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           .single();
 
         if (error) {
-          console.log(`Profile load attempt ${attempt}/${maxRetries} failed:`, error);
           lastProfileError = error;
           
           // Only retry if it's the PGRST116 error (profile not found)
           if (error.code === 'PGRST116') {
             if (attempt < maxRetries) {
-              console.log(`Waiting ${retryDelay}ms before retry...`);
               await new Promise(resolve => setTimeout(resolve, retryDelay));
             }
           } else {
@@ -269,7 +265,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             break;
           }
         } else {
-          console.log('Profile loaded successfully on attempt', attempt);
           fetchedProfile = data;
           break;
         }
@@ -281,7 +276,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         // If we still can't load the profile after all retries, check if this is a new user
         // by examining the user metadata for role = 'management'
         if (user.user_metadata?.role === 'management' && lastProfileError?.code === 'PGRST116') {
-          console.log('New management user detected. Profile will be created by database trigger.');
           // We'll let the user continue, as the profile should be created by the database trigger
           // and will be available on next app launch or refresh
         }
@@ -290,11 +284,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      set({ profile: fetchedProfile });
-
+      set({ profile: fetchedProfile as UserProfile });
+      
       // Load school if user has school_id
       if (fetchedProfile.school_id) {
-        console.log('Loading school data for school_id:', fetchedProfile.school_id);
         const { data: school, error: schoolError } = await supabase
           .from('schools')
           .select('*')
@@ -302,18 +295,17 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           .single();
         
         if (schoolError) {
+          console.error('authStore: loadUserProfile - Supabase error fetching school:', schoolError.message, schoolError);
           console.error('Error loading school data:', schoolError);
         } else if (school) {
-          console.log('School data loaded successfully');
           set({ school });
           await get().loadSubscription();
         }
       } else {
-        console.log('User has no school_id, skipping school data load');
+        console.log('authStore: loadUserProfile - User has no school_id, skipping school data load');
       }
 
       set({ loading: false });
-      console.log('Profile loading complete');
     } catch (error) {
       // Catch any other unexpected errors from the outer try block
       console.error('authStore: Unexpected error in loadUserProfile:', error);
@@ -406,13 +398,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   initialize: async () => {
     try {
       set({ loading: true });
-      
       // Get current session
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
         set({ session, user: session.user });
         await get().loadUserProfile();
+      } else {
       }
       
       // Listen for auth changes
