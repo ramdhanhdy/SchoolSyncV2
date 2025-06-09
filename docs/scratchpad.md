@@ -29,4 +29,9 @@ All previous tasks in the scratchpad are now marked as complete.
 - **Implementation Plan**: [./implementation-plan/fix-profile-load-error-pgrst116.md](./implementation-plan/fix-profile-load-error-pgrst116.md)
 - **Status**: Previous task `fix-displayname-error` completed and merged into `master`. New branch `bugfix/pgrst116-school-load` created. Ready to address the PGRST116 error. Prioritizing T2 (RLS review) due to recent RLS enablement on `schools` table.
 
+## Task: Fix Onboarding Loop
+- **Status:** Planning Complete
+- **Implementation Plan:** [./implementation-plan/fix-onboarding-loop.md](./implementation-plan/fix-onboarding-loop.md)
+- **Notes:** User is repeatedly shown onboarding screens despite completing it, especially with 'remember me' active.
+
 <!-- Add new task references above this line -->
