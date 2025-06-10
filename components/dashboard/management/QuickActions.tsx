@@ -62,22 +62,29 @@ function QuickActionButton({ action }: QuickActionButtonProps) {
   return (
     <TouchableOpacity
       onPress={action.onPress}
-      className="rounded-2xl shadow-md min-h-[110px] flex-1 overflow-hidden"
-      activeOpacity={0.7}
+      className="rounded-2xl shadow-lg min-h-[100px] flex-1 overflow-hidden"
+      activeOpacity={0.8}
+      style={{
+        shadowColor: '#1e293b',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+      }}
     >
       <LinearGradient
         colors={getGradientColors() as any}
         start={{x: 0, y: 0}}
         end={{x: 1, y: 1}}
-        className="h-full w-full p-4 items-center justify-center"
+        className="h-full w-full p-3 items-center justify-center"
       >
         <View className="items-center">
           {getIcon()}
-          <Text className="text-sm font-medium text-white mt-2 text-center">
+          <Text className="text-xs font-semibold text-white mt-2 text-center leading-tight">
             {action.title}
           </Text>
           {action.subtitle && (
-            <Text className="text-xs text-white text-opacity-80 mt-1 text-center">
+            <Text className="text-xs text-white text-opacity-90 mt-1 text-center leading-tight">
               {action.subtitle}
             </Text>
           )}
@@ -161,24 +168,30 @@ export function QuickActions({ actions }: QuickActionsProps) {
 
   return (
     <View>
-      <View className="flex-row items-center mb-4">
+      <View className="flex-row items-center mb-5">
         <LinearGradient
           colors={['#3b82f6', '#60a5fa']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          className="w-1 h-6 rounded-full mr-2"
+          className="w-1 h-6 rounded-full mr-3"
         />
-        <Text className="text-lg font-bold text-slate-900">
-          Aksi Cepat
-        </Text>
+        <View>
+          <Text className="text-xl font-bold text-slate-900">
+            Aksi Cepat
+          </Text>
+          <Text className="text-sm text-slate-600 mt-1">
+            Kelola pesantren dengan mudah
+          </Text>
+        </View>
       </View>
       
       <ScrollView 
         showsVerticalScrollIndicator={false}
-        className="max-h-[250px]"
+        className="max-h-[280px]"
+        contentContainerStyle={{ paddingBottom: 8 }}
       >
         {rows.map((row, rowIndex) => (
-          <View key={rowIndex} className="flex-row space-x-3 mb-3">
+          <View key={rowIndex} className="flex-row gap-4 mb-4"> {/* Increased gap and margin */}
             {row.map((action) => (
               <QuickActionButton key={action.id} action={action} />
             ))}

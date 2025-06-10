@@ -1,7 +1,6 @@
 import React from 'react';
 import { ScrollView, View, RefreshControl, Text } from 'react-native';
 import { DashboardHeader } from '../shared/DashboardHeader';
-import { SnapshotGrid } from './SnapshotGrid';
 import { PrayerTimes } from '../shared/PrayerTimes';
 import { PriorityCard } from './PriorityCard';
 import { QuickActions } from './QuickActions';
@@ -51,47 +50,31 @@ export function Dashboard({
       />
       
       {/* Main Content */}
-      <View className="px-5 pb-6">
-        {/* Stats Snapshot Grid */}
-        <View className="mb-6">
-          <SnapshotGrid stats={data.stats} />
-        </View>
-        
-        {/* Prayer Times Section */}
-        <View className="mb-6">
+      <View className="px-4 pb-28"> {/* Adjusted horizontal padding for better alignment */}
+        {/* Prayer Times Section - First section now */}
+        <View className="mb-12"> {/* Further increased margin for better separation */}
           <PrayerTimes prayerTimes={data.prayerTimes} />
         </View>
         
         {/* Priority Items Section */}
         {priorityItems.length > 0 && (
-          <View className="mb-6">
+          <View className="mb-12"> {/* Further increased margin for better separation */}
             <View className="flex-1">
               {/* Top gradient border */}
               <LinearGradient
                 colors={['#3b82f6', '#60a5fa']} 
-                className="h-1 rounded-t-2xl"
+                className="h-1.5 rounded-t-2xl"
               />
-              <View className="bg-white rounded-b-2xl p-4 shadow-md border-x border-b border-slate-100">
-                <View className="flex-row items-center justify-between mb-4">
-                  <View className="flex-row items-center">
-                    <LinearGradient
-                      colors={['#3b82f6', '#60a5fa']}
-                      start={{x: 0, y: 0}}
-                      end={{x: 1, y: 0}}
-                      className="w-1 h-6 rounded-full mr-2"
-                    />
-                    <View>
-                      <Text className="text-lg font-bold text-slate-900">
-                        Perhatian Khusus
-                      </Text>
-                      <Text className="text-sm text-slate-600">
-                        {priorityItems.length} item memerlukan perhatian
-                      </Text>
-                    </View>
+              <View className="bg-white rounded-b-2xl p-5 shadow-md border-x border-b border-slate-100"> {/* Increased padding */}
+                <View className="flex-row items-center justify-between mb-5"> {/* Increased margin */}
+                  <View>
+                    <Text className="text-sm text-slate-600">
+                      {priorityItems.length} item memerlukan perhatian
+                    </Text>
                   </View>
                 </View>
                 
-                <View>
+                <View className="space-y-3"> {/* Added consistent spacing between priority cards */}
                   {priorityItems.map((item) => (
                     <PriorityCard key={item.id} item={item} />
                   ))}
@@ -102,7 +85,7 @@ export function Dashboard({
         )}
         
         {/* Quick Actions Section */}
-        <View className="mb-6">
+        <View className="mb-12"> {/* Further increased margin for better separation */}
           <QuickActions actions={quickActions} />
         </View>
       </View>
@@ -120,7 +103,6 @@ Dashboard.displayName = 'ManagementDashboard';
 // Export individual components for flexibility
 export {
   DashboardHeader,
-  SnapshotGrid,
   PrayerTimes,
   PriorityCard,
   QuickActions,

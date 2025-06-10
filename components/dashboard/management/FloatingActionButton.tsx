@@ -58,19 +58,19 @@ export function FloatingActionButton({ onPress }: FloatingActionButtonProps) {
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 24,
-    right: 24,
+    bottom: 32, // Increased bottom spacing
+    right: 20,
     zIndex: 10,
   },
   buttonContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 56, // Slightly smaller for better proportion
+    height: 56,
+    borderRadius: 28,
     shadowColor: '#1e293b',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 6,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 6 }, // Enhanced shadow
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 10,
     overflow: 'hidden',
   },
   touchable: {

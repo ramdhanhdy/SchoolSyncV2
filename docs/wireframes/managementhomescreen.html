@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Home Screen - Long Form Wireframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f0f4f8;
+            color: #334155;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+        
+        .wireframe-container {
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 40px 20px 100px 20px;
+            background: linear-gradient(135deg, #f0f4f8, #e2e8f0);
+        }
+        
+        .phone-wireframe {
+            width: 375px;
+            min-height: 1600px;
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(15, 23, 42, 0.15);
+            overflow: visible;
+            position: relative;
+            transform: scale(0.8);
+            transform-origin: top center;
+            margin: 20px 0;
+        }
+        
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: #0f172a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        /* Header Section */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            color: white;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 197, 253, 0.05) 100%);
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .school-info h1 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #f8fafc;
+        }
+        
+        .school-info p {
+            font-size: 12px;
+            opacity: 0.8;
+            color: #cbd5e1;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .notification-badge {
+            position: relative;
+            background: rgba(59, 130, 246, 0.2);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            padding: 8px;
+            font-size: 16px;
+        }
+        
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #3b82f6;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        
+        .greeting {
+            margin-bottom: 12px;
+        }
+        
+        .greeting h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            color: #f8fafc;
+        }
+        
+        .greeting p {
+            font-size: 14px;
+            opacity: 0.8;
+            color: #cbd5e1;
+        }
+        
+        .trial-banner {
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 12px;
+        }
+        
+        .trial-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .trial-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #3b82f6;
+            text-transform: uppercase;
+        }
+        
+        .trial-days {
+            font-size: 12px;
+            font-weight: 700;
+            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+        
+        .trial-progress {
+            width: 100%;
+            height: 8px;
+            background: rgba(59, 130, 246, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        
+        .trial-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            width: 60%;
+        }
+        
+        .trial-steps {
+            display: flex;
+            gap: 12px;
+            font-size: 10px;
+            color: rgba(248, 250, 252, 0.9);
+        }
+        
+        /* Main Content */
+        .main-content {
+            padding: 20px;
+            min-height: 1200px;
+            overflow: visible;
+        }
+        
+        /* Weather & Prayer Section */
+        .contextual-widgets {
+            margin-bottom: 16px;
+        }
+        
+        .weather-widget {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .weather-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .weather-location {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .weather-condition {
+            font-size: 11px;
+            opacity: 0.9;
+        }
+        
+        .weather-icon {
+            font-size: 24px;
+        }
+        
+        .prayer-widget {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .prayer-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        .prayer-times {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .prayer-time {
+            text-align: center;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            font-size: 11px;
+        }
+        
+        .prayer-time.current {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            color: #1e40af;
+            font-weight: 600;
+            border-color: #3b82f6;
+        }
+        
+        .prayer-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        
+        /* Section Titles */
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+            margin-top: 8px;
+        }
+        
+        /* Snapshot Grid */
+        .snapshot-section {
+            margin-bottom: 16px;
+        }
+        
+        .snapshot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .snapshot-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border: 1px solid #e2e8f0;
+            border-top: 4px solid #3b82f6;
+            position: relative;
+        }
+        
+        .snapshot-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        
+        .snapshot-title {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .snapshot-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 4px;
+        }
+        
+        .snapshot-subtitle {
+            font-size: 9px;
+            color: #64748b;
+        }
+        
+        .trend-badge {
+            font-size: 8px;
+            font-weight: 700;
+            padding: 3px 6px;
+            border-radius: 8px;
+            color: white;
+        }
+        
+        .trend-up {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+        
+        .trend-down {
+            background: linear-gradient(135deg, #ef4444, #f87171);
+        }
+        
+        .trend-neutral {
+            background: linear-gradient(135deg, #6b7280, #9ca3af);
+        }
+        
+        /* Priority Section */
+        .priority-section {
+            margin-bottom: 16px;
+        }
+        
+        .priority-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .priority-card {
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border-left: 4px solid #e2e8f0;
+        }
+        
+        .priority-card.urgent {
+            border-left-color: #ef4444;
+            background: linear-gradient(135deg, #fef2f2, #ffffff);
+        }
+        
+        .priority-card.warning {
+            border-left-color: #f59e0b;
+            background: linear-gradient(135deg, #fffbeb, #ffffff);
+        }
+        
+        .priority-card.success {
+            border-left-color: #10b981;
+            background: linear-gradient(135deg, #f0fdf4, #ffffff);
+        }
+        
+        .priority-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        
+        .priority-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .priority-icon {
+            font-size: 14px;
+        }
+        
+        .priority-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        .priority-time {
+            font-size: 9px;
+            color: #64748b;
+        }
+        
+        .priority-description {
+            font-size: 10px;
+            color: #475569;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+        
+        .priority-action {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 12px;
+            font-size: 9px;
+            font-weight: 600;
+            align-self: flex-start;
+        }
+        
+        /* Quick Actions */
+        .quick-actions-section {
+            margin-bottom: 16px;
+        }
+        
+        .quick-actions-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .quick-action {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 8px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+        
+        .quick-action-icon {
+            font-size: 18px;
+            color: #3b82f6;
+            margin-bottom: 6px;
+        }
+        
+        .quick-action-label {
+            font-size: 9px;
+            font-weight: 600;
+            color: #475569;
+        }
+        
+        /* Recent Activity */
+        .activity-section {
+            margin-bottom: 16px;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .activity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 14px;
+            box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+            border-left: 4px solid #64748b;
+        }
+        
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+        
+        .activity-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        
+        .activity-icon {
+            font-size: 14px;
+        }
+        
+        .activity-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+        
+        .activity-time {
+            font-size: 9px;
+            color: #64748b;
+        }
+        
+        .activity-description {
+            font-size: 10px;
+            color: #475569;
+            line-height: 1.4;
+        }
+        
+        /* Floating Action Button */
+        .floating-action {
+            position: absolute;
+            bottom: 120px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -4px 20px rgba(15, 23, 42, 0.08);
+            border-radius: 0 0 25px 25px;
+        }
+        
+        .nav-item {
+            text-align: center;
+            padding: 6px;
+            color: #64748b;
+            font-size: 9px;
+        }
+        
+        .nav-item.active {
+            color: #3b82f6;
+        }
+        
+        .nav-icon {
+            font-size: 16px;
+            margin-bottom: 4px;
+            display: block;
+        }
+        
+        /* Wireframe Labels */
+        .wireframe-label {
+            position: absolute;
+            background: rgba(59, 130, 246, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 600;
+            z-index: 10;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+        
+        .label-header {
+            top: 60px;
+            left: -90px;
+        }
+        
+        .label-weather {
+            top: 280px;
+            left: -100px;
+        }
+        
+        .label-snapshot {
+            top: 420px;
+            left: -110px;
+        }
+        
+        .label-priority {
+            top: 580px;
+            left: -100px;
+        }
+        
+        .label-actions {
+            top: 820px;
+            left: -100px;
+        }
+        
+        .label-activity {
+            top: 920px;
+            left: -110px;
+        }
+        
+        .label-nav {
+            bottom: 40px;
+            left: -120px;
+        }
+        
+        /* Title */
+        .wireframe-title {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: #0f172a;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(15, 23, 42, 0.3);
+            z-index: 100;
+        }
+        
+        .wireframe-subtitle {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wireframe-container">
+        
+        <!-- Wireframe Title -->
+        <div class="wireframe-title">
+            Management Home Screen
+            <div class="wireframe-subtitle">Long Form Wireframe - Premium Blue Theme</div>
+        </div>
+        
+        <div class="phone-wireframe">
+            
+            <!-- Wireframe Labels -->
+            <div class="wireframe-label label-header">Header Section</div>
+            <div class="wireframe-label label-weather">Contextual Widgets</div>
+            <div class="wireframe-label label-snapshot">Snapshot Metrics</div>
+            <div class="wireframe-label label-priority">Priority Alerts</div>
+            <div class="wireframe-label label-actions">Quick Actions</div>
+            <div class="wireframe-label label-activity">Recent Activity</div>
+            <div class="wireframe-label label-nav">Bottom Navigation</div>
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>🟢 📶 🔋</span>
+            </div>
+            
+            <!-- Header Section -->
+            <div class="header">
+                <div class="header-content">
+                    <div class="header-top">
+                        <div class="school-info">
+                            <h1>🕌 Pesantren Al-Hikmah</h1>
+                            <p>Bogor, Jawa Barat</p>
+                        </div>
+                        <div class="header-actions">
+                            <div class="notification-badge">
+                                🔔
+                                <div class="badge">5</div>
+                            </div>
+                            <div class="notification-badge">👤</div>
+                        </div>
+                    </div>
+                    
+                    <div class="greeting">
+                        <h2>Assalamualaikum, Pak Ahmad</h2>
+                        <p>Senin, 5 Juni 2025 | 08:30 WIB</p>
+                    </div>
+                    
+                    <!-- Trial Status -->
+                    <div class="trial-banner">
+                        <div class="trial-header">
+                            <span class="trial-title">Trial Status</span>
+                            <span class="trial-days">23 hari tersisa</span>
+                        </div>
+                        <div class="trial-progress">
+                            <div class="trial-progress-fill"></div>
+                        </div>
+                        <div class="trial-steps">
+                            <span>✓ Profile setup</span>
+                            <span>✓ 5 teachers</span>
+                            <span>⏳ Students</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="main-content">
+                
+                <!-- Contextual Widgets -->
+                <div class="contextual-widgets">
+                    <div class="weather-widget">
+                        <div class="weather-content">
+                            <div>
+                                <div class="weather-location">Bogor, 29°C</div>
+                                <div class="weather-condition">Berawan, 65% humidity</div>
+                            </div>
+                            <div class="weather-icon">⛅</div>
+                        </div>
+                    </div>
+                    
+                    <div class="prayer-widget">
+                        <div class="prayer-title">
+                            <span>🕌</span>
+                            <span>Jadwal Sholat Hari Ini</span>
+                        </div>
+                        <div class="prayer-times">
+                            <div class="prayer-time">
+                                <div class="prayer-name">Subuh</div>
+                                <div>04:45</div>
+                            </div>
+                            <div class="prayer-time current">
+                                <div class="prayer-name">Dzuhur</div>
+                                <div>12:15</div>
+                            </div>
+                            <div class="prayer-time">
+                                <div class="prayer-name">Ashar</div>
+                                <div>15:30</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Snapshot Section -->
+                <div class="snapshot-section">
+                    <div class="section-title">Snapshot Hari Ini</div>
+                    <div class="snapshot-grid">
+                        <div class="snapshot-card">
+                            <div class="snapshot-header">
+                                <div class="snapshot-title">Santri</div>
+                                <div class="trend-badge trend-up">+12</div>
+                            </div>
+                            <div class="snapshot-value">156</div>
+                            <div class="snapshot-subtitle">12 santri baru</div>
+                        </div>
+                        
+                        <div class="snapshot-card">
+                            <div class="snapshot-header">
+                                <div class="snapshot-title">Kehadiran</div>
+                                <div class="trend-badge trend-down">-0.5%</div>
+                            </div>
+                            <div class="snapshot-value">96.5%</div>
+                            <div class="snapshot-subtitle">151 dari 156</div>
+                        </div>
+                        
+                        <div class="snapshot-card">
+                            <div class="snapshot-header">
+                                <div class="snapshot-title">Keuangan</div>
+                                <div class="trend-badge trend-up">+5.2%</div>
+                            </div>
+                            <div class="snapshot-value">89.2%</div>
+                            <div class="snapshot-subtitle">collection rate</div>
+                        </div>
+                        
+                        <div class="snapshot-card">
+                            <div class="snapshot-header">
+                                <div class="snapshot-title">Guru</div>
+                                <div class="trend-badge trend-neutral">12/15</div>
+                            </div>
+                            <div class="snapshot-value">12</div>
+                            <div class="snapshot-subtitle">online</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Priority Section -->
+                <div class="priority-section">
+                    <div class="section-title">Prioritas Hari Ini</div>
+                    <div class="priority-list">
+                        <div class="priority-card urgent">
+                            <div class="priority-header">
+                                <div class="priority-title-row">
+                                    <span class="priority-icon">🔴</span>
+                                    <span class="priority-title">1 approval urgent</span>
+                                </div>
+                                <span class="priority-time">45 menit lalu</span>
+                            </div>
+                            <div class="priority-description">
+                                Izin pulang Ahmad Rizki (3A) untuk acara keluarga - butuh persetujuan segera
+                            </div>
+                            <button class="priority-action">Review Sekarang</button>
+                        </div>
+                        
+                        <div class="priority-card warning">
+                            <div class="priority-header">
+                                <div class="priority-title-row">
+                                    <span class="priority-icon">🟡</span>
+                                    <span class="priority-title">3 guru belum input absen</span>
+                                </div>
+                                <span class="priority-time">2 jam lalu</span>
+                            </div>
+                            <div class="priority-description">
+                                Ust. Mahmud, Ust. Yusuf, dan Ustz. Siti belum input absensi pagi
+                            </div>
+                            <button class="priority-action">Kirim Reminder</button>
+                        </div>
+                        
+                        <div class="priority-card success">
+                            <div class="priority-header">
+                                <div class="priority-title-row">
+                                    <span class="priority-icon">🟢</span>
+                                    <span class="priority-title">Target collection tercapai!</span>
+                                </div>
+                                <span class="priority-time">1 jam lalu</span>
+                            </div>
+                            <div class="priority-description">
+                                Collection rate bulan ini mencapai 89.2%, melampaui target 85%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions Section -->
+                <div class="quick-actions-section">
+                    <div class="section-title">Aksi Cepat</div>
+                    <div class="quick-actions-grid">
+                        <div class="quick-action">
+                            <div class="quick-action-icon">👥</div>
+                            <div class="quick-action-label">Tambah Guru</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">📊</div>
+                            <div class="quick-action-label">Reports</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">⚙️</div>
+                            <div class="quick-action-label">Settings</div>
+                        </div>
+                        <div class="quick-action">
+                            <div class="quick-action-icon">❓</div>
+                            <div class="quick-action-label">Help</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Activity Section -->
+                <div class="activity-section">
+                    <div class="section-title">Aktivitas Terbaru</div>
+                    <div class="activity-list">
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <div class="activity-title-row">
+                                    <span class="activity-icon">📝</span>
+                                    <span class="activity-title">Laporan insiden diselesaikan</span>
+                                </div>
+                                <span class="activity-time">3 jam lalu</span>
+                            </div>
+                            <div class="activity-description">
+                                Insiden #2451 (Kesehatan: Demam Tinggi) - M. Rizki sudah ditangani tim kesehatan
+                            </div>
+                        </div>
+                        
+                        <div class="activity-card">
+                            <div class="activity-header">
+                                <div class="activity-title-row">
+                                    <span class="activity-icon">💰</span>
+                                    <span class="activity-title">Pembayaran diterima</span>
+                                </div>
+                                <span class="activity-time">5 jam lalu</span>
+                            </div>
+                            <div class="activity-description">
+                                SPP Juni dari 8 santri berhasil dikonfirmasi - total Rp 8.5M
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Floating Action Button -->
+            <div class="floating-action">+</div>
+            
+            <!-- Bottom Navigation -->
+            <div class="bottom-nav">
+                <div class="nav-item active">
+                    <span class="nav-icon">🏠</span>
+                    <span>Beranda</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">👥</span>
+                    <span>Santri</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">💰</span>
+                    <span>Keuangan</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span>Laporan</span>
+                </div>
+                <div class="nav-item">
+                    <span class="nav-icon">🛡️</span>
+                    <span>Keamanan</span>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

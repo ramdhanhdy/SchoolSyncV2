@@ -83,38 +83,40 @@ export function PriorityCard({ item }: PriorityCardProps) {
   };
 
   return (
-    <View className={`${config.bgColor} ${config.borderColor} border rounded-2xl p-4 mb-3 shadow-sm`}>
+    <View className={`${config.bgColor} ${config.borderColor} border rounded-2xl p-5 mb-4 shadow-md`}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
-          <View className="flex-row items-center mb-2">
-            {config.icon}
-            <Text className={`${config.textColor} font-semibold text-sm ml-2 flex-1`}>
+          <View className="flex-row items-center mb-3">
+            <View className="w-8 h-8 rounded-full bg-white/50 items-center justify-center mr-3">
+              {config.icon}
+            </View>
+            <Text className={`${config.textColor} font-bold text-base flex-1 leading-5`}>
               {item.title}
             </Text>
           </View>
           
-          <Text className={`${config.subtitleColor} text-sm mb-3`}>
+          <Text className={`${config.subtitleColor} text-sm mb-4 leading-5`}>
             {item.description}
           </Text>
           
           <View className="flex-row items-center">
-            <Clock size={12} color={config.iconColor} />
-            <Text className={`${config.subtitleColor} text-xs ml-1`}>
+            <Clock size={14} color={config.iconColor} />
+            <Text className={`${config.subtitleColor} text-xs ml-2 font-medium`}>
               {formatTimestamp(item.timestamp)}
             </Text>
           </View>
         </View>
         
         {item.actionLabel && item.onAction && (
-          <TouchableOpacity onPress={item.onAction}>
-            <View className="ml-3 overflow-hidden rounded-lg shadow-sm">
+          <TouchableOpacity onPress={item.onAction} activeOpacity={0.8}>
+            <View className="ml-4 overflow-hidden rounded-xl shadow-lg">
               <LinearGradient
                 colors={config.gradientColors as any}
                 start={{x: 0, y: 0}}
                 end={{x: 1, y: 0}}
-                className="px-3 py-2"
+                className="px-4 py-3"
               >
-                <Text className="text-white text-xs font-medium">
+                <Text className="text-white text-sm font-semibold">
                   {item.actionLabel}
                 </Text>
               </LinearGradient>
