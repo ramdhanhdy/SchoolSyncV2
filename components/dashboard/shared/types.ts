@@ -84,6 +84,17 @@ export interface DashboardData {
   weather: WeatherData;
   prayerTimes: PrayerTime[];
   trial: TrialStatus;
+  recentActivities: RecentActivityItem[];
+}
+
+export interface RecentActivityItem {
+  id: string;
+  icon: string; // Lucide icon name
+  description: string;
+  timestamp: Date; // Using Date for easier formatting
+  category?: string; // e.g., 'payment', 'announcement', 'attendance'
+  iconColor?: string; // Optional: for icon foreground color
+  iconBgColor?: string; // Optional: for icon background circle color
 }
 
 export interface QuickAction {

@@ -199,6 +199,26 @@ USING (id = auth.uid());
 ```typescript
 loadUserProfile: async () => {
   try {
+
+---
+
+## ⚙️ Development Workflow & Tooling
+
+### Issue #5: File Creation in New Subdirectories
+
+**Date:** June 2025
+**Severity:** Low
+**Platform:** Development Environment / Tooling
+
+#### Problem Description
+Attempting to create a file in a new, non-existent subdirectory (e.g., `components/navigation/BottomNavigationBar.tsx`) using the `write_to_file` tool (or similar file system operations) might fail if the tool/environment doesn't automatically create parent directories.
+
+#### Solution
+Placing the file in an existing directory (e.g., `components/BottomNavigationBar.tsx`) was a successful workaround. Alternatively, ensure parent directories are created manually or use tools/commands that create them recursively if needed before attempting to write the file.
+
+#### Prevention
+- When creating files in new directory structures, verify that the file creation tool or script handles recursive directory creation.
+- If not, create the necessary directory path first using a separate command or step.
     const { user } = get();
     if (!user) return;
 

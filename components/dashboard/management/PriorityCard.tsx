@@ -23,31 +23,31 @@ export function PriorityCard({ item }: PriorityCardProps) {
     switch (item.type) {
       case 'urgent':
         return {
-          bgColor: 'bg-red-50',
-          borderColor: 'border-red-100',
-          iconColor: '#ef4444',
-          textColor: 'text-red-800',
-          subtitleColor: 'text-red-600',
+          bgColor: 'bg-red-100',
+          borderColor: 'border-red-200',
+          iconColor: '#ef4444', // red-500
+          textColor: 'text-red-900',
+          subtitleColor: 'text-red-700',
           gradientColors: ['#ef4444', '#f87171'],
           icon: <AlertTriangle size={20} color="#ef4444" />,
         };
       case 'warning':
         return {
-          bgColor: 'bg-amber-50',
-          borderColor: 'border-amber-100',
-          iconColor: '#f59e0b',
-          textColor: 'text-amber-800',
-          subtitleColor: 'text-amber-600',
+          bgColor: 'bg-amber-100',
+          borderColor: 'border-amber-200',
+          iconColor: '#f59e0b', // amber-500
+          textColor: 'text-amber-900',
+          subtitleColor: 'text-amber-700',
           gradientColors: ['#f59e0b', '#fbbf24'],
           icon: <AlertCircle size={20} color="#f59e0b" />,
         };
       case 'success':
         return {
-          bgColor: 'bg-emerald-50',
-          borderColor: 'border-emerald-100',
-          iconColor: '#10b981',
-          textColor: 'text-emerald-800',
-          subtitleColor: 'text-emerald-600',
+          bgColor: 'bg-emerald-100',
+          borderColor: 'border-emerald-200',
+          iconColor: '#10b981', // emerald-500
+          textColor: 'text-emerald-900',
+          subtitleColor: 'text-emerald-700',
           gradientColors: ['#10b981', '#34d399'],
           icon: <CheckCircle size={20} color="#10b981" />,
         };
@@ -87,7 +87,7 @@ export function PriorityCard({ item }: PriorityCardProps) {
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <View className="flex-row items-center mb-3">
-            <View className="w-8 h-8 rounded-full bg-white/50 items-center justify-center mr-3">
+            <View className="w-8 h-8 rounded-full items-center justify-center mr-3">
               {config.icon}
             </View>
             <Text className={`${config.textColor} font-bold text-base flex-1 leading-5`}>

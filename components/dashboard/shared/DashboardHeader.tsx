@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { Bell, MapPin } from 'lucide-react-native';
+import { Bell, MapPin, User } from 'lucide-react-native';
 import { SchoolInfo, UserInfo, TrialStatus } from './types';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -24,10 +24,10 @@ export function DashboardHeader({
 }: DashboardHeaderProps) {
   const getCurrentGreeting = () => {
     const hour = new Date().getHours();
-    if (hour < 12) return 'Assalamualaikum, Selamat Pagi';
-    if (hour < 15) return 'Assalamualaikum, Selamat Siang';
-    if (hour < 18) return 'Assalamualaikum, Selamat Sore';
-    return 'Assalamualaikum, Selamat Malam';
+    if (hour < 12) return `Assalamualaikum, Selamat Pagi ${user.name}!`;
+    if (hour < 15) return `Assalamualaikum, Selamat Siang ${user.name}!`;
+    if (hour < 18) return `Assalamualaikum, Selamat Sore ${user.name}!`;
+    return `Assalamualaikum, Selamat Malam ${user.name}!`;
   };
 
   const getCurrentDate = () => {
@@ -38,7 +38,7 @@ export function DashboardHeader({
       month: 'long',
       day: 'numeric',
     };
-    return now.toLocaleDateString('id-ID', options);
+    return `${now.toLocaleDateString('id-ID', options)} - ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
   };
 
   const getTrialProgress = () => {
@@ -47,7 +47,7 @@ export function DashboardHeader({
 
   return (
     <LinearGradient
-      colors={['#0f172a', '#1e293b']}
+      colors={['#1e3a8a', '#3b82f6']}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       className="px-5 pt-12 pb-5"
@@ -74,7 +74,7 @@ export function DashboardHeader({
           >
             <Bell size={24} color="#f8fafc" />
             {notificationCount > 0 && (
-              <BlurView intensity={80} tint="light" className="absolute -top-1 -right-1 bg-blue-400/70 rounded-full min-w-[18px] h-[18px] items-center justify-center overflow-hidden border border-blue-300/30">
+              <BlurView intensity={80} tint="light" className="absolute -top-1 -right-1 bg-red-500/80 rounded-full min-w-[18px] h-[18px] items-center justify-center overflow-hidden border border-red-400/30">
                 <Text className="text-white text-xs font-medium">
                   {notificationCount > 99 ? '99+' : notificationCount}
                 </Text>
@@ -86,9 +86,7 @@ export function DashboardHeader({
             onPress={onProfilePress}
             className="w-10 h-10 bg-blue-500 rounded-full items-center justify-center border-2 border-blue-400"
           >
-            <Text className="text-slate-50 font-semibold text-lg">
-              {user.name.charAt(0).toUpperCase()}
-            </Text>
+            <User size={24} color="#f8fafc" />
           </TouchableOpacity>
         </View>
       </View>

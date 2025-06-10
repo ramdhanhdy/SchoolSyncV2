@@ -42,7 +42,7 @@ export function FloatingActionButton({ onPress }: FloatingActionButtonProps) {
           style={styles.touchable}
         >
           <LinearGradient
-            colors={['#3b82f6', '#60a5fa']}
+            colors={['#1e3a8a', '#3b82f6']} // Updated to premium blue gradient
             start={{x: 0, y: 0}}
             end={{x: 1, y: 1}}
             style={styles.gradient}

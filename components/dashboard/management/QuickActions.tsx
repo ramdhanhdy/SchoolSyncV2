@@ -22,30 +22,33 @@ interface QuickActionButtonProps {
 }
 
 function QuickActionButton({ action }: QuickActionButtonProps) {
-  const getIcon = () => {
+  // Ensure action.color has a fallback if not provided, though types should enforce it.
+  const backgroundColor = action.color || '#64748B'; // Default to slate if color is missing
+    const getIcon = (iconColor: string = "white") => {
     switch (action.icon) {
       case 'user-plus':
-        return <UserPlus size={24} color="white" />;
+        return <UserPlus size={24} color={iconColor} />;
       case 'graduation-cap':
-        return <GraduationCap size={24} color="white" />;
+        return <GraduationCap size={24} color={iconColor} />;
       case 'file-text':
-        return <FileText size={24} color="white" />;
+        return <FileText size={24} color={iconColor} />;
       case 'settings':
-        return <Settings size={24} color="white" />;
+        return <Settings size={24} color={iconColor} />;
       case 'help-circle':
-        return <HelpCircle size={24} color="white" />;
+        return <HelpCircle size={24} color={iconColor} />;
       case 'calendar':
-        return <Calendar size={24} color="white" />;
+        return <Calendar size={24} color={iconColor} />;
       case 'dollar-sign':
-        return <DollarSign size={24} color="white" />;
+        return <DollarSign size={24} color={iconColor} />;
       case 'message-square':
-        return <MessageSquare size={24} color="white" />;
+        return <MessageSquare size={24} color={iconColor} />;
       default:
-        return <Settings size={24} color="white" />;
+        return <Settings size={24} color={iconColor} />;
     }
   };
   
-  const getGradientColors = () => {
+  // getGradientColors is no longer needed for solid background
+  /* const getGradientColors = () => {
     switch (action.icon) {
       case 'user-plus': return ['#3B82F6', '#60A5FA'];
       case 'graduation-cap': return ['#8B5CF6', '#A78BFA'];
@@ -57,39 +60,28 @@ function QuickActionButton({ action }: QuickActionButtonProps) {
       case 'help-circle': return ['#EC4899', '#F472B6'];
       default: return ['#3B82F6', '#60A5FA'];
     }
-  };
+  }; */
 
   return (
     <TouchableOpacity
       onPress={action.onPress}
-      className="rounded-2xl shadow-lg min-h-[100px] flex-1 overflow-hidden"
-      activeOpacity={0.8}
-      style={{
-        shadowColor: '#1e293b',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-      }}
+      className="items-center w-20" // Width for each item, adjust as needed
+      activeOpacity={0.7}
     >
-      <LinearGradient
-        colors={getGradientColors() as any}
-        start={{x: 0, y: 0}}
-        end={{x: 1, y: 1}}
-        className="h-full w-full p-3 items-center justify-center"
+      <View 
+        className="w-14 h-14 rounded-full items-center justify-center mb-1.5 shadow-md"
+        style={{ backgroundColor: backgroundColor, elevation: 3 }} // Apply color directly
       >
-        <View className="items-center">
-          {getIcon()}
-          <Text className="text-xs font-semibold text-white mt-2 text-center leading-tight">
-            {action.title}
-          </Text>
-          {action.subtitle && (
-            <Text className="text-xs text-white text-opacity-90 mt-1 text-center leading-tight">
-              {action.subtitle}
-            </Text>
-          )}
-        </View>
-      </LinearGradient>
+        {getIcon("white")} {/* Icon color white for contrast */}
+      </View>
+      <Text className="text-xs font-medium text-slate-700 text-center leading-tight">
+        {action.title}
+      </Text>
+      {action.subtitle && (
+        <Text className="text-[10px] text-slate-500 text-center mt-0.5 leading-tight">
+          {action.subtitle}
+        </Text>
+      )}
     </TouchableOpacity>
   );
 }
@@ -160,48 +152,35 @@ export function QuickActions({ actions }: QuickActionsProps) {
 
   const quickActions = actions || defaultActions;
 
-  // Split actions into rows of 4
-  const rows = [];
-  for (let i = 0; i < quickActions.length; i += 4) {
-    rows.push(quickActions.slice(i, i + 4));
-  }
-
   return (
-    <View>
-      <View className="flex-row items-center mb-5">
+    <View className="mb-6"> {/* Added mb-6 for spacing similar to other sections */}
+      <View className="flex-row items-center mb-3"> {/* Reduced mb from 5 to 3 */}
+        {/* Optional: Keep the decorative line and title style or simplify */}
         <LinearGradient
           colors={['#3b82f6', '#60a5fa']}
           start={{x: 0, y: 0}}
           end={{x: 1, y: 0}}
-          className="w-1 h-6 rounded-full mr-3"
+          className="w-1 h-5 rounded-full mr-2.5" /* Adjusted size & margin */
         />
         <View>
-          <Text className="text-xl font-bold text-slate-900">
+          <Text className="text-lg font-semibold text-slate-800"> {/* Matched Snapshot title style */}
             Aksi Cepat
           </Text>
-          <Text className="text-sm text-slate-600 mt-1">
+          {/* Subtitle can be kept or removed based on final look */}
+          {/* <Text className="text-sm text-slate-600 mt-0.5">
             Kelola pesantren dengan mudah
-          </Text>
+          </Text> */}
         </View>
       </View>
       
       <ScrollView 
-        showsVerticalScrollIndicator={false}
-        className="max-h-[280px]"
-        contentContainerStyle={{ paddingBottom: 8 }}
+        horizontal={true}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={{ paddingHorizontal: 4, paddingVertical: 8, columnGap: 12 }} // Added columnGap
+        className="flex-row"
       >
-        {rows.map((row, rowIndex) => (
-          <View key={rowIndex} className="flex-row gap-4 mb-4"> {/* Increased gap and margin */}
-            {row.map((action) => (
-              <QuickActionButton key={action.id} action={action} />
-            ))}
-            {/* Fill remaining space if row has less than 4 items */}
-            {row.length < 4 && (
-              Array.from({ length: 4 - row.length }).map((_, index) => (
-                <View key={`spacer-${index}`} className="flex-1" />
-              ))
-            )}
-          </View>
+        {quickActions.map((action) => (
+          <QuickActionButton key={action.id} action={action} />
         ))}
       </ScrollView>
     </View>
