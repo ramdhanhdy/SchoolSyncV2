@@ -2,6 +2,8 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Bell, MapPin } from 'lucide-react-native';
 import { SchoolInfo, UserInfo, TrialStatus } from './types';
+import { LinearGradient } from 'expo-linear-gradient';
+import { BlurView } from 'expo-blur';
 
 interface DashboardHeaderProps {
   school: SchoolInfo;
@@ -44,7 +46,12 @@ export function DashboardHeader({
   };
 
   return (
-    <View className="bg-white px-5 pt-12 pb-5">
+    <LinearGradient
+      colors={['#0f172a', '#1e293b']}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
+      className="px-5 pt-12 pb-5"
+    >
       {/* Status Bar Spacer */}
       <View className="h-6" />
       
@@ -52,10 +59,10 @@ export function DashboardHeader({
       <View className="flex-row items-center justify-between mb-4">
         {/* School Info */}
         <View className="flex-1">
-          <Text className="text-lg font-bold text-gray-900">{school.name}</Text>
+          <Text className="text-lg font-bold text-slate-50">{school.name}</Text>
           <View className="flex-row items-center mt-1">
-            <MapPin size={14} color="#6B7280" />
-            <Text className="text-sm text-gray-600 ml-1">{school.location}</Text>
+            <MapPin size={14} color="#94a3b8" />
+            <Text className="text-sm text-slate-300 ml-1">{school.location}</Text>
           </View>
         </View>
         
@@ -65,21 +72,21 @@ export function DashboardHeader({
             onPress={onNotificationPress}
             className="relative p-2"
           >
-            <Bell size={24} color="#374151" />
+            <Bell size={24} color="#f8fafc" />
             {notificationCount > 0 && (
-              <View className="absolute -top-1 -right-1 bg-red-500 rounded-full min-w-[18px] h-[18px] items-center justify-center">
+              <BlurView intensity={80} tint="light" className="absolute -top-1 -right-1 bg-blue-400/70 rounded-full min-w-[18px] h-[18px] items-center justify-center overflow-hidden border border-blue-300/30">
                 <Text className="text-white text-xs font-medium">
                   {notificationCount > 99 ? '99+' : notificationCount}
                 </Text>
-              </View>
+              </BlurView>
             )}
           </TouchableOpacity>
           
           <TouchableOpacity
             onPress={onProfilePress}
-            className="w-10 h-10 bg-green-100 rounded-full items-center justify-center"
+            className="w-10 h-10 bg-blue-500 rounded-full items-center justify-center border-2 border-blue-400"
           >
-            <Text className="text-green-700 font-semibold text-lg">
+            <Text className="text-slate-50 font-semibold text-lg">
               {user.name.charAt(0).toUpperCase()}
             </Text>
           </TouchableOpacity>
@@ -88,39 +95,45 @@ export function DashboardHeader({
       
       {/* Greeting and Date */}
       <View className="mb-4">
-        <Text className="text-base text-gray-900 font-medium">
+        <Text className="text-base text-slate-50 font-medium">
           {getCurrentGreeting()}
         </Text>
-        <Text className="text-sm text-gray-600 mt-1">
+        <Text className="text-sm text-slate-300 mt-1">
           {getCurrentDate()}
         </Text>
       </View>
       
       {/* Trial Status Banner */}
       {trial.isActive && (
-        <View className="bg-orange-50 border border-orange-200 rounded-lg p-3">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text className="text-orange-800 font-medium text-sm">
-              Masa Uji Coba Aktif
+        <BlurView intensity={30} tint="light" className="overflow-hidden rounded-lg border border-blue-300/30">
+          <LinearGradient
+            colors={['rgba(59, 130, 246, 0.2)', 'rgba(96, 165, 250, 0.15)']}
+            className="p-3 rounded-lg"
+          >
+            <View className="flex-row items-center justify-between mb-2">
+              <Text className="text-slate-50 font-medium text-sm">
+                TRIAL STATUS
+              </Text>
+              <Text className="text-blue-200 text-sm font-medium">
+                {trial.daysRemaining} hari tersisa
+              </Text>
+            </View>
+            
+            {/* Progress Bar */}
+            <View className="bg-blue-900/30 h-2 rounded-full overflow-hidden">
+              <LinearGradient
+                colors={['#3b82f6', '#60a5fa']} 
+                className="h-full rounded-full"
+                style={{ width: `${getTrialProgress()}%` }}
+              />
+            </View>
+            
+            <Text className="text-slate-200 text-xs mt-2">
+              Nikmati semua fitur premium selama masa uji coba
             </Text>
-            <Text className="text-orange-600 text-sm font-medium">
-              {trial.daysRemaining} hari tersisa
-            </Text>
-          </View>
-          
-          {/* Progress Bar */}
-          <View className="bg-orange-200 h-2 rounded-full overflow-hidden">
-            <View
-              className="bg-orange-500 h-full rounded-full"
-              style={{ width: `${getTrialProgress()}%` }}
-            />
-          </View>
-          
-          <Text className="text-orange-700 text-xs mt-2">
-            Nikmati semua fitur premium selama masa uji coba
-          </Text>
-        </View>
+          </LinearGradient>
+        </BlurView>
       )}
-    </View>
+    </LinearGradient>
   );
 }

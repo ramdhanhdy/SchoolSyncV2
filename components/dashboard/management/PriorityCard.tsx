@@ -1,54 +1,65 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, ColorValue } from 'react-native';
 import { AlertTriangle, AlertCircle, CheckCircle, Clock } from 'lucide-react-native';
 import { PriorityItem } from '../shared/types';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface PriorityCardProps {
   item: PriorityItem;
 }
 
+interface ConfigType {
+  bgColor: string;
+  borderColor: string;
+  iconColor: string;
+  textColor: string;
+  subtitleColor: string;
+  gradientColors: string[];
+  icon: React.ReactNode;
+}
+
 export function PriorityCard({ item }: PriorityCardProps) {
-  const getConfig = () => {
+  const getConfig = (): ConfigType => {
     switch (item.type) {
       case 'urgent':
         return {
           bgColor: 'bg-red-50',
-          borderColor: 'border-red-200',
-          iconColor: '#DC2626',
+          borderColor: 'border-red-100',
+          iconColor: '#ef4444',
           textColor: 'text-red-800',
           subtitleColor: 'text-red-600',
-          buttonColor: 'bg-red-600',
-          icon: <AlertTriangle size={20} color="#DC2626" />,
+          gradientColors: ['#ef4444', '#f87171'],
+          icon: <AlertTriangle size={20} color="#ef4444" />,
         };
       case 'warning':
         return {
-          bgColor: 'bg-yellow-50',
-          borderColor: 'border-yellow-200',
-          iconColor: '#D97706',
-          textColor: 'text-yellow-800',
-          subtitleColor: 'text-yellow-600',
-          buttonColor: 'bg-yellow-600',
-          icon: <AlertCircle size={20} color="#D97706" />,
+          bgColor: 'bg-amber-50',
+          borderColor: 'border-amber-100',
+          iconColor: '#f59e0b',
+          textColor: 'text-amber-800',
+          subtitleColor: 'text-amber-600',
+          gradientColors: ['#f59e0b', '#fbbf24'],
+          icon: <AlertCircle size={20} color="#f59e0b" />,
         };
       case 'success':
         return {
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200',
-          iconColor: '#059669',
-          textColor: 'text-green-800',
-          subtitleColor: 'text-green-600',
-          buttonColor: 'bg-green-600',
-          icon: <CheckCircle size={20} color="#059669" />,
+          bgColor: 'bg-emerald-50',
+          borderColor: 'border-emerald-100',
+          iconColor: '#10b981',
+          textColor: 'text-emerald-800',
+          subtitleColor: 'text-emerald-600',
+          gradientColors: ['#10b981', '#34d399'],
+          icon: <CheckCircle size={20} color="#10b981" />,
         };
       default:
         return {
-          bgColor: 'bg-gray-50',
-          borderColor: 'border-gray-200',
-          iconColor: '#6B7280',
-          textColor: 'text-gray-800',
-          subtitleColor: 'text-gray-600',
-          buttonColor: 'bg-gray-600',
-          icon: <AlertCircle size={20} color="#6B7280" />,
+          bgColor: 'bg-slate-50',
+          borderColor: 'border-slate-100',
+          iconColor: '#64748b',
+          textColor: 'text-slate-800',
+          subtitleColor: 'text-slate-600',
+          gradientColors: ['#3b82f6', '#60a5fa'],
+          icon: <AlertCircle size={20} color="#64748b" />,
         };
     }
   };
@@ -72,7 +83,7 @@ export function PriorityCard({ item }: PriorityCardProps) {
   };
 
   return (
-    <View className={`${config.bgColor} ${config.borderColor} border rounded-xl p-4 mb-3`}>
+    <View className={`${config.bgColor} ${config.borderColor} border rounded-2xl p-4 mb-3 shadow-sm`}>
       <View className="flex-row items-start justify-between">
         <View className="flex-1">
           <View className="flex-row items-center mb-2">
@@ -95,13 +106,19 @@ export function PriorityCard({ item }: PriorityCardProps) {
         </View>
         
         {item.actionLabel && item.onAction && (
-          <TouchableOpacity
-            onPress={item.onAction}
-            className={`${config.buttonColor} px-3 py-2 rounded-lg ml-3`}
-          >
-            <Text className="text-white text-xs font-medium">
-              {item.actionLabel}
-            </Text>
+          <TouchableOpacity onPress={item.onAction}>
+            <View className="ml-3 overflow-hidden rounded-lg shadow-sm">
+              <LinearGradient
+                colors={config.gradientColors as any}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                className="px-3 py-2"
+              >
+                <Text className="text-white text-xs font-medium">
+                  {item.actionLabel}
+                </Text>
+              </LinearGradient>
+            </View>
           </TouchableOpacity>
         )}
       </View>

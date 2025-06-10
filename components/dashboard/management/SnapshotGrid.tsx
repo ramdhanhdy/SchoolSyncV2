@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, ScrollView } from 'react-native';
 import { Users, UserCheck, DollarSign, GraduationCap, TrendingUp, TrendingDown } from 'lucide-react-native';
 import { DashboardStats } from '../shared/types';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface SnapshotGridProps {
   stats: DashboardStats;
@@ -32,34 +33,53 @@ function SnapshotCard({ title, value, trend, subtitle, icon, color }: SnapshotCa
   };
 
   return (
-    <View className="bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex-1">
-      <View className="flex-row items-center justify-between mb-3">
-        <View className={`w-10 h-10 rounded-lg items-center justify-center ${color}`}>
-          {icon}
-        </View>
-        {trend !== undefined && (
-          <View className="flex-row items-center">
-            {getTrendIcon()}
-            <Text className={`text-xs font-medium ml-1 ${getTrendColor()}`}>
-              {trend > 0 ? '+' : ''}{trend}%
-            </Text>
+    <View className="flex-1">
+      {/* Top gradient border */}
+      <LinearGradient
+        colors={['#3b82f6', '#60a5fa']} 
+        className="h-1 rounded-t-2xl"
+      />
+      <View className="bg-white rounded-b-2xl p-4 shadow-md border-x border-b border-slate-100 pt-5">
+        <View className="flex-row items-center justify-between mb-3">
+          <View className={`w-10 h-10 rounded-lg items-center justify-center ${color}`}>
+            {icon}
           </View>
+          {trend !== undefined && (
+            <LinearGradient
+              colors={trend > 0 ? ['#10b981', '#34d399'] : ['#ef4444', '#f87171']} 
+              className="px-2 py-1 rounded-full shadow-sm"
+            >
+              <View className="flex-row items-center">
+                {getTrendIcon()}
+                <Text className="text-xs font-medium ml-1 text-white">
+                  {trend > 0 ? '+' : ''}{trend}%
+                </Text>
+              </View>
+            </LinearGradient>
+          )}
+        </View>
+        
+        <LinearGradient
+          colors={['#3b82f6', '#60a5fa']} 
+          className="mb-1"
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+        >
+          <Text className="text-2xl font-bold text-transparent bg-clip-text">
+            {value}
+          </Text>
+        </LinearGradient>
+        
+        <Text className="text-sm text-slate-700 mb-1 font-medium">
+          {title}
+        </Text>
+        
+        {subtitle && (
+          <Text className="text-xs text-slate-500">
+            {subtitle}
+          </Text>
         )}
       </View>
-      
-      <Text className="text-2xl font-bold text-gray-900 mb-1">
-        {value}
-      </Text>
-      
-      <Text className="text-sm text-gray-600 mb-1">
-        {title}
-      </Text>
-      
-      {subtitle && (
-        <Text className="text-xs text-gray-500">
-          {subtitle}
-        </Text>
-      )}
     </View>
   );
 }
@@ -69,50 +89,74 @@ SnapshotCard.displayName = 'SnapshotCard';
 
 export function SnapshotGrid({ stats }: SnapshotGridProps) {
   return (
-    <View className="px-5">
-      <Text className="text-lg font-bold text-gray-900 mb-4">
-        Ringkasan Hari Ini
-      </Text>
-      
-      {/* First Row */}
-      <View className="flex-row space-x-3 mb-3">
-        <SnapshotCard
-          title="Total Santri"
-          value={stats.students.total}
-          trend={stats.students.trend}
-          subtitle={`+${stats.students.newToday} hari ini`}
-          icon={<Users size={20} color="white" />}
-          color="bg-blue-500"
-        />
-        
-        <SnapshotCard
-          title="Kehadiran"
-          value={`${stats.attendance.percentage}%`}
-          trend={stats.attendance.trend}
-          subtitle={`${stats.attendance.present}/${stats.attendance.total} hadir`}
-          icon={<UserCheck size={20} color="white" />}
-          color="bg-green-500"
-        />
+    <View className="px-0">
+      <View className="px-5">
+        <View className="flex-row items-center mb-4">
+          <LinearGradient
+            colors={['#3b82f6', '#60a5fa']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            className="w-1 h-6 rounded-full mr-2"
+          />
+          <Text className="text-lg font-bold text-slate-900">
+            Ringkasan Hari Ini
+          </Text>
+        </View>
       </View>
       
-      {/* Second Row */}
-      <View className="flex-row space-x-3">
-        <SnapshotCard
-          title="Keuangan"
-          value={`${stats.financial.collectionRate}%`}
-          trend={stats.financial.trend}
-          subtitle="Tingkat penagihan"
-          icon={<DollarSign size={20} color="white" />}
-          color="bg-yellow-500"
-        />
-        
-        <SnapshotCard
-          title="Ustadz Online"
-          value={`${stats.teachers.online}/${stats.teachers.total}`}
-          subtitle="Sedang aktif"
-          icon={<GraduationCap size={20} color="white" />}
-          color="bg-purple-500"
-        />
+      {/* Cards - Full Width, Scrollable Horizontally */}
+      <View className="mb-3">
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          contentContainerStyle={{ paddingHorizontal: 20 }}
+          className="-mx-0"
+        >
+          <View className="flex-row space-x-3 py-1">
+            <View className="w-[200px]">
+              <SnapshotCard
+                title="Total Santri"
+                value={stats.students.total}
+                trend={stats.students.trend}
+                subtitle={`+${stats.students.newToday} hari ini`}
+                icon={<Users size={20} color="white" />}
+                color="bg-blue-500"
+              />
+            </View>
+            
+            <View className="w-[200px]">
+              <SnapshotCard
+                title="Kehadiran"
+                value={`${stats.attendance.percentage}%`}
+                trend={stats.attendance.trend}
+                subtitle={`${stats.attendance.present}/${stats.attendance.total} hadir`}
+                icon={<UserCheck size={20} color="white" />}
+                color="bg-green-500"
+              />
+            </View>
+            
+            <View className="w-[200px]">
+              <SnapshotCard
+                title="Keuangan"
+                value={`${stats.financial.collectionRate}%`}
+                trend={stats.financial.trend}
+                subtitle="Tingkat penagihan"
+                icon={<DollarSign size={20} color="white" />}
+                color="bg-yellow-500"
+              />
+            </View>
+            
+            <View className="w-[200px]">
+              <SnapshotCard
+                title="Ustadz Online"
+                value={`${stats.teachers.online}/${stats.teachers.total}`}
+                subtitle="Sedang aktif"
+                icon={<GraduationCap size={20} color="white" />}
+                color="bg-purple-500"
+              />
+            </View>
+          </View>
+        </ScrollView>
       </View>
     </View>
   );

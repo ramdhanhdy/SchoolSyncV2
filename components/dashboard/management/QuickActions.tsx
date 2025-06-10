@@ -11,6 +11,7 @@ import {
   MessageSquare
 } from 'lucide-react-native';
 import { QuickAction } from '../shared/types';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface QuickActionsProps {
   actions?: QuickAction[];
@@ -24,43 +25,64 @@ function QuickActionButton({ action }: QuickActionButtonProps) {
   const getIcon = () => {
     switch (action.icon) {
       case 'user-plus':
-        return <UserPlus size={24} color={action.color || '#1B5E20'} />;
+        return <UserPlus size={24} color="white" />;
       case 'graduation-cap':
-        return <GraduationCap size={24} color={action.color || '#1B5E20'} />;
+        return <GraduationCap size={24} color="white" />;
       case 'file-text':
-        return <FileText size={24} color={action.color || '#1B5E20'} />;
+        return <FileText size={24} color="white" />;
       case 'settings':
-        return <Settings size={24} color={action.color || '#1B5E20'} />;
+        return <Settings size={24} color="white" />;
       case 'help-circle':
-        return <HelpCircle size={24} color={action.color || '#1B5E20'} />;
+        return <HelpCircle size={24} color="white" />;
       case 'calendar':
-        return <Calendar size={24} color={action.color || '#1B5E20'} />;
+        return <Calendar size={24} color="white" />;
       case 'dollar-sign':
-        return <DollarSign size={24} color={action.color || '#1B5E20'} />;
+        return <DollarSign size={24} color="white" />;
       case 'message-square':
-        return <MessageSquare size={24} color={action.color || '#1B5E20'} />;
+        return <MessageSquare size={24} color="white" />;
       default:
-        return <Settings size={24} color={action.color || '#1B5E20'} />;
+        return <Settings size={24} color="white" />;
+    }
+  };
+  
+  const getGradientColors = () => {
+    switch (action.icon) {
+      case 'user-plus': return ['#3B82F6', '#60A5FA'];
+      case 'graduation-cap': return ['#8B5CF6', '#A78BFA'];
+      case 'file-text': return ['#10B981', '#34D399'];
+      case 'calendar': return ['#EF4444', '#F87171'];
+      case 'dollar-sign': return ['#F59E0B', '#FBBF24'];
+      case 'message-square': return ['#0891B2', '#22D3EE'];
+      case 'settings': return ['#64748B', '#94A3B8'];
+      case 'help-circle': return ['#EC4899', '#F472B6'];
+      default: return ['#3B82F6', '#60A5FA'];
     }
   };
 
   return (
     <TouchableOpacity
       onPress={action.onPress}
-      className="bg-white rounded-xl p-4 items-center justify-center shadow-sm border border-gray-100 min-h-[100px] flex-1"
+      className="rounded-2xl shadow-md min-h-[110px] flex-1 overflow-hidden"
       activeOpacity={0.7}
     >
-      <View className="items-center">
-        {getIcon()}
-        <Text className="text-sm font-medium text-gray-900 mt-2 text-center">
-          {action.title}
-        </Text>
-        {action.subtitle && (
-          <Text className="text-xs text-gray-500 mt-1 text-center">
-            {action.subtitle}
+      <LinearGradient
+        colors={getGradientColors() as any}
+        start={{x: 0, y: 0}}
+        end={{x: 1, y: 1}}
+        className="h-full w-full p-4 items-center justify-center"
+      >
+        <View className="items-center">
+          {getIcon()}
+          <Text className="text-sm font-medium text-white mt-2 text-center">
+            {action.title}
           </Text>
-        )}
-      </View>
+          {action.subtitle && (
+            <Text className="text-xs text-white text-opacity-80 mt-1 text-center">
+              {action.subtitle}
+            </Text>
+          )}
+        </View>
+      </LinearGradient>
     </TouchableOpacity>
   );
 }
@@ -138,10 +160,18 @@ export function QuickActions({ actions }: QuickActionsProps) {
   }
 
   return (
-    <View className="px-5">
-      <Text className="text-lg font-bold text-gray-900 mb-4">
-        Aksi Cepat
-      </Text>
+    <View>
+      <View className="flex-row items-center mb-4">
+        <LinearGradient
+          colors={['#3b82f6', '#60a5fa']}
+          start={{x: 0, y: 0}}
+          end={{x: 1, y: 0}}
+          className="w-1 h-6 rounded-full mr-2"
+        />
+        <Text className="text-lg font-bold text-slate-900">
+          Aksi Cepat
+        </Text>
+      </View>
       
       <ScrollView 
         showsVerticalScrollIndicator={false}
